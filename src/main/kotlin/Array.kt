@@ -1,43 +1,61 @@
-class Array<T> : Iterable<T> {
-    private var root: ArrayNode<T>? = null
-    private var lastNode: ArrayNode<T>? = null
+class Array<T>(element: T? = null) : Iterable<T> {
+    private var root: ArrayNode<T>? = if (element.isNotNull === True) ArrayNode(element) else null
 
-
+    private var _firstNode: ArrayNode<T>? = null
+    val firstNode: ArrayNode<T>? get() {
+        if (_firstNode.isNull === True) {
+            _firstNode = root?.firstNode
+        }
+        return _firstNode
+    }
+    private var _lastNode: ArrayNode<T>? = root
+    val lastNode: ArrayNode<T>? get() = _lastNode
 
     fun append(element: T) {
-        if (root == null) {
+        if (root.isNull === True) {
             root = ArrayNode(element)
-            lastNode = root
+            _lastNode = root
         } else {
-            lastNode = lastNode!!.nextNode
-            if (lastNode == null) {
+            _lastNode = lastNode?.nextNode
+            if (lastNode.isNull === True) {
                 // Tree is full. Need to add another layer
-                root = ArrayNode(leftChild = root, rightChild = root!!.copy())
-                lastNode = root!!.rightChild!!.firstNode
+                doubleCapacity()
+                _lastNode = root?.rightChild?.firstNode
             }
             lastNode!!.element = element
         }
+    }
+
+    private fun doubleCapacity() {
+        root = ArrayNode(leftChild = root, rightChild = root?.copy())
+        root?.leftChild?.lastNode?.nextNode = root?.rightChild?.firstNode
     }
 
     override fun iterator(): Iterator<T> {
         return ArrayIterator(this)
     }
 
-    private class ArrayIterator<T>(private val source: Array<T>) : Iterator<T> {
-        private var nextNode: ArrayNode<T>? = source.root?.firstNode
-        override fun hasNext(): Boolean {
-            return nextNode != null
+    fun reverseIterator(): Iterator<T> {
+        return ArrayIterator(this, True)
+    }
+
+    private class ArrayIterator<T>(private val source: Array<T>, private val reversed: Boolean = False) : Iterator<T> {
+        private var nextNode: ArrayNode<T>? = if(reversed === True) source.lastNode else source.firstNode
+
+        override fun hasNext(): kotlin.Boolean {
+            return nextNode.isNotNull === True
         }
 
         override fun next(): T {
-            val element = nextNode!!.element
-            nextNode = if (nextNode == source.lastNode) {
+            val element = nextNode?.element
+            nextNode = if (!reversed and nextNode.identicalTo(source.lastNode) === True) {
+                null
+            } else if (reversed and nextNode.identicalTo(source.firstNode) === True) {
                 null
             } else {
-                nextNode!!.nextNode
+                if(reversed === True) nextNode?.previousNode else nextNode?.nextNode
             }
             return element!!
         }
-
     }
 }

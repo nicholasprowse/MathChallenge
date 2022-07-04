@@ -1,25 +1,36 @@
-class ArrayNode<T>(var element: T? = null, leftChild: ArrayNode<T>? = null, rightChild: ArrayNode<T>? = null) {
-    var isLeftChild = false
-    var parent: ArrayNode<T>? = null
+class ArrayNode<T>(
+    var element: T? = null,
+    leftChild: ArrayNode<T>? = null,
+    rightChild: ArrayNode<T>? = null
+) {
+    private var parent: ArrayNode<T>? = null
     var leftChild: ArrayNode<T>? = null
         set(node) {
-            if (node != null) {
-                node.isLeftChild = true
-                node.parent = this
-            }
+            node?.parent = this
             field = node
         }
     var rightChild: ArrayNode<T>? = null
         set(node) {
-            if (node != null) {
-                node.isLeftChild = false
-                node.parent = this
-            }
+            node?.parent = this
             field = node
         }
 
-    val hasParent get() = parent != null
-    val isLeaf get() = leftChild == null && rightChild == null
+    private var _nextNode: ArrayNode<T>? = null
+    var nextNode: ArrayNode<T>? get() = _nextNode
+        set(node) {
+            node?._previousNode = this
+            _nextNode = node
+        }
+
+    private var _previousNode: ArrayNode<T>? = null
+    var previousNode: ArrayNode<T>? get() = _previousNode
+        set(node) {
+            node?._nextNode = this
+            _previousNode = node
+        }
+
+//    val hasParent get() = parent != null
+//    val isLeaf get() = leftChild.isNull and rightChild.isNull
 
     init {
         this.rightChild = rightChild
@@ -28,14 +39,9 @@ class ArrayNode<T>(var element: T? = null, leftChild: ArrayNode<T>? = null, righ
 
     fun copy() : ArrayNode<T> {
         val newNode = ArrayNode(element)
-        if (leftChild != null) {
-            newNode.leftChild = leftChild!!.copy()
-        }
-
-        if (rightChild != null) {
-            newNode.rightChild = rightChild!!.copy()
-        }
-
+        newNode.leftChild = leftChild?.copy()
+        newNode.rightChild = rightChild?.copy()
+        newNode.leftChild?.lastNode?.nextNode = newNode.rightChild?.firstNode
         return newNode
     }
 
@@ -50,22 +56,12 @@ class ArrayNode<T>(var element: T? = null, leftChild: ArrayNode<T>? = null, righ
     }
 
     /*
-    The leaf node immediately to the right of this node
+    The right most descendant of this node
      */
-    val nextNode: ArrayNode<T>? get() {
-        var nextNode = this
-
+    val lastNode: ArrayNode<T> get() {
+        var node = this
         while (true) {
-            if (nextNode.hasParent) {
-                if (nextNode.isLeftChild) {
-                    return nextNode.parent?.rightChild?.firstNode
-                } else {
-                    nextNode = nextNode.parent!!
-                }
-            } else {
-                // Reached root, so there is no next node
-                return null
-            }
+            node = node.rightChild ?: return node
         }
     }
 }

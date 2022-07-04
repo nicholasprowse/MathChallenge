@@ -15,7 +15,7 @@ At the moment, I am not certain if this is even possible to do without arrays, b
     - The `hasNext` method of an `Iterator` must return a primitive `Boolean`
     - Kotlin Boolean primitives can be implicitly created in condition and loop statements, as Kotlin does not allow use of if and while statements 
     without a primitive `Boolean` as the condition. (I am considering scrapping this exception, as when statements can replace if statements without 
-    the need for `Boolean`, and I for loops could potentially replace while loops with the correct iterators set up)
+    the need for `Boolean`, and for loops could potentially replace while loops with the correct iterators set up)
   - No external classes can be referenced, and no external functions can be called. This includes builtin functions, even operators 
   (except reference equality, `===`)
   - Interfaces are allowed

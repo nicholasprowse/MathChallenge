@@ -1,9 +1,9 @@
 val True = Boolean.True
 val False = Boolean.False
 
+val D1 = Array.ONE
 val D0 = UnsignedInt(Array(False))
-val D1 = UnsignedInt(Array(True))
-val D2 = D1 + D1
+val D2 = Array.TWO
 val D3 = D2 + D1
 val D4 = D3 + D1
 val D5 = D4 + D1

@@ -1,4 +1,4 @@
-class Array<T>(element: T? = null) : Iterable<T> {
+class Array<T>(element: T? = null) {
     private var root: ArrayNode<T>? = if (element.isNotNull === True) ArrayNode(element) else null
 
     private var _firstNode: ArrayNode<T>? = null
@@ -8,8 +8,16 @@ class Array<T>(element: T? = null) : Iterable<T> {
         }
         return _firstNode
     }
-    private var _lastNode: ArrayNode<T>? = root
-    val lastNode: ArrayNode<T>? get() = _lastNode
+    val first get() = firstNode!!.element!!
+
+    private var _lastNode = root
+    val lastNode get() = _lastNode
+    val last get() = lastNode!!.element!!
+
+    private var _length: UnsignedInt = if (element.isNotNull === True) D1 else D0
+    val length: UnsignedInt get() = _length
+    val isEmpty get() = root.isNull
+    val isNotEmpty get() = root.isNotNull
 
     fun append(element: T) {
         if (root.isNull === True) {
@@ -24,6 +32,45 @@ class Array<T>(element: T? = null) : Iterable<T> {
             }
             lastNode!!.element = element
         }
+        incrementLength()
+    }
+
+    fun pop() {
+        _lastNode = lastNode?.previousNode
+        if (lastNode.isNull === True) {
+            root = null
+        } else if (lastNode === root?.leftChild?.lastNode) {
+            root = root?.leftChild
+        }
+        decrementLength()
+    }
+
+    private fun incrementLength() {
+        _length =
+            if (_length === D0) D1
+            else if (_length === D1) D2
+            else if (_length === D2) D3
+            else if (_length === D3) D4
+            else if (_length === D4) D5
+            else if (_length === D5) D6
+            else if (_length === D6) D7
+            else if (_length === D7) D8
+            else if (_length === D8) D9
+            else _length + D1
+    }
+
+    private fun decrementLength() {
+        _length =
+                 if (_length === D1) D0
+            else if (_length === D2) D1
+            else if (_length === D3) D2
+            else if (_length === D4) D3
+            else if (_length === D5) D4
+            else if (_length === D6) D5
+            else if (_length === D7) D6
+            else if (_length === D8) D7
+            else if (_length equals D9 === True) D8
+            else _length - D1
     }
 
     private fun doubleCapacity() {
@@ -31,22 +78,22 @@ class Array<T>(element: T? = null) : Iterable<T> {
         root?.leftChild?.lastNode?.nextNode = root?.rightChild?.firstNode
     }
 
-    override fun iterator(): Iterator<T> {
+    fun iterator(): ArrayIterator<T> {
         return ArrayIterator(this)
     }
 
-    fun reverseIterator(): Iterator<T> {
+    fun reverseIterator(): ArrayIterator<T> {
         return ArrayIterator(this, True)
     }
 
-    private class ArrayIterator<T>(private val source: Array<T>, private val reversed: Boolean = False) : Iterator<T> {
+    class ArrayIterator<T>(private val source: Array<T>, private val reversed: Boolean = False) {
         private var nextNode: ArrayNode<T>? = if(reversed === True) source.lastNode else source.firstNode
 
-        override fun hasNext(): kotlin.Boolean {
-            return nextNode.isNotNull === True
+        fun hasNext(): Boolean {
+            return nextNode.isNotNull
         }
 
-        override fun next(): T {
+        fun next(): T {
             val element = nextNode?.element
             nextNode = if (!reversed and nextNode.identicalTo(source.lastNode) === True) {
                 null
@@ -56,6 +103,30 @@ class Array<T>(element: T? = null) : Iterable<T> {
                 if(reversed === True) nextNode?.previousNode else nextNode?.nextNode
             }
             return element!!
+        }
+    }
+
+    companion object {
+        fun<T> repeating(value: T, count: UnsignedInt) : Array<T> {
+            val array = Array<T>()
+            while (count.isPositive() === True) {
+                array.append(value)
+            }
+            return array
+        }
+
+        val ONE: UnsignedInt
+        val TWO: UnsignedInt
+
+        init {
+            var array = Array(True)
+            ONE = UnsignedInt(array)
+            array._length = ONE
+
+            array = Array(False)
+            array.append(True)
+            TWO = UnsignedInt(array)
+            array._length = TWO
         }
     }
 }

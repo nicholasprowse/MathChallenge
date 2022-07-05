@@ -12,8 +12,7 @@ At the moment, I am not certain if this is even possible to do without arrays, b
     - The `toString` method is allowed to use `Char` and `String` internally, and is allowed to return a `String`. `toString` is only allowed to 
     be called from other `toString` methods, or when printing an object
     - Kotlin Boolean primitives can be implicitly created in condition and loop statements, as Kotlin does not allow use of if and while statements 
-    without a primitive `Boolean` as the condition. All if/while statements should be of the form `if/while(<Boolean expression> === True)` or
-    `if/while(<Boolean expression> === False)`
+    without a primitive `Boolean` as the condition. All if/while statements should be of the form `if/while(<expression 1> === <expression 2>)`
   - No external classes can be referenced, and no external functions can be called. This includes builtin functions, even operators 
   (except reference equality, `===`)
 

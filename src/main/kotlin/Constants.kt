@@ -33,3 +33,13 @@ fun Any?.identicalTo(obj: Any?): Boolean {
     return False
 }
 
+fun factorial(n: UnsignedInt): UnsignedInt {
+    var i = n
+    var result = D1
+    while (i greaterThan D0 === True) {
+        result *= i
+        i--
+    }
+    return result
+}
+

@@ -1,16 +1,16 @@
 val True = Boolean.True
 val False = Boolean.False
 
-val D1 = Array.ONE
-val D0 = UnsignedInt(Array(False))
-val D2 = Array.TWO
-val D3 = D2 + D1
-val D4 = D3 + D1
-val D5 = D4 + D1
-val D6 = D5 + D1
-val D7 = D6 + D1
-val D8 = D7 + D1
-val D9 = D8 + D1
+val D0 = UnsignedInt.ZERO
+val D1 = UnsignedInt.ONE
+val D2 = UnsignedInt.TWO
+val D3 = UnsignedInt.THREE
+val D4 = UnsignedInt.FOUR
+val D5 = UnsignedInt.FIVE
+val D6 = UnsignedInt.SIX
+val D7 = UnsignedInt.SEVEN
+val D8 = UnsignedInt.EIGHT
+val D9 = UnsignedInt.NINE
 
 val Any?.isNull: Boolean get() {
     if(this === null) {

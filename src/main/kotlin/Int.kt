@@ -1,17 +1,47 @@
-import java.math.BigInteger
+class UnsignedInt private constructor(private var bits: Array<Boolean>) {
 
-class UnsignedInt(private val bits: Array<Boolean>) {
+    companion object {
+        val ZERO: UnsignedInt = UnsignedInt(Array())
+        val ONE: UnsignedInt = UnsignedInt(Array())
+        val TWO: UnsignedInt = UnsignedInt(Array(False))
+        val THREE: UnsignedInt
+        val FOUR: UnsignedInt
+        val FIVE: UnsignedInt
+        val SIX: UnsignedInt
+        val SEVEN: UnsignedInt
+        val EIGHT: UnsignedInt
+        val NINE: UnsignedInt
+        val TEN: UnsignedInt
+
+        init {
+            ZERO.bits = Array(False)
+            ONE.bits.append(True)
+            TWO.bits.append(True)
+
+            THREE = TWO + ONE
+            FOUR = THREE + ONE
+            FIVE = FOUR + ONE
+            SIX = FIVE + ONE
+            SEVEN = SIX + ONE
+            EIGHT = SEVEN + ONE
+            NINE = EIGHT + ONE
+            TEN = NINE + ONE
+        }
+    }
 
     init {
         // Remove leading zeros
-        while (bits.last === False) {
-            bits.pop()
-            if (bits.isEmpty === True) {
-                bits.append(False)
-                break
+        if (bits.isNotEmpty === True) {
+            while (bits.last === False) {
+                bits.pop()
+                if (bits.isEmpty === True) {
+                    bits.append(False)
+                    break
+                }
             }
         }
     }
+
     operator fun plus(other: UnsignedInt) : UnsignedInt {
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
@@ -65,7 +95,7 @@ class UnsignedInt(private val bits: Array<Boolean>) {
         // If there is a borrow at the end, then B is greater than A
         // In this case we return 0 as this is the closest unsigned integer to the true answer
         if (borrow === True) {
-            return D0
+            return ZERO
         }
 
         return UnsignedInt(resultBits)
@@ -84,7 +114,7 @@ class UnsignedInt(private val bits: Array<Boolean>) {
         // If there is a borrow at the end, then we are decrementing 0
         // In this case we return 0 as we cannot decrement from 0
         if (borrow === True) {
-            return D0
+            return ZERO
         }
 
         return UnsignedInt(resultBits)
@@ -124,8 +154,8 @@ class UnsignedInt(private val bits: Array<Boolean>) {
             b = this
         }
 
-        var result = D0
-        b += D0         // This is effectively to copy b as we are going to mutate it
+        var result = ZERO
+        b += ZERO         // This is effectively to copy b as we are going to mutate it
         val iteratorA = a.bits.iterator()
         while (iteratorA.hasNext() === True) {
             if (iteratorA.next() === True) {
@@ -183,7 +213,7 @@ class UnsignedInt(private val bits: Array<Boolean>) {
         }
         return Pair(UnsignedInt(quotient), remainder)
     }
-
+// 15, 11, 12, 16, 12, 2
     infix fun lessThan(other: UnsignedInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) True else False
     }
@@ -202,22 +232,22 @@ class UnsignedInt(private val bits: Array<Boolean>) {
 
     private fun compareTo(other: UnsignedInt): ComparisonResult {
         // Small numbers are handled separately, as they cause problems
-        if (this equals D0 and other.isPositive() === True) {
+        if (this equals ZERO and (other notEquals ZERO) === True) {
             return ComparisonResult.LESS
         }
-        if (other equals D0 and isPositive() === True) {
+        if (other equals ZERO and (this notEquals ZERO) === True) {
             return ComparisonResult.GREATER
         }
-        if (this equals D1 and (other notEquals D1) === True) {
+        if (this equals ONE and (other notEquals ONE) === True) {
             return ComparisonResult.LESS
         }
-        if (other equals D1 and (this notEquals D1) === True) {
+        if (other equals ONE and (this notEquals ONE) === True) {
             return ComparisonResult.GREATER
         }
         return if (bits.length equals other.bits.length === True) {
             compareWithEqualBitSize(other)
         } else {
-            return bits.length.compareTo(other.bits.length)
+            bits.length.compareTo(other.bits.length)
         }
     }
 
@@ -242,23 +272,39 @@ class UnsignedInt(private val bits: Array<Boolean>) {
     }
 
     fun isPositive() : Boolean {
-        val iterator = bits.iterator()
-        while(iterator.hasNext() === True) {
-            if (iterator.next() === True) {
-                return True
-            }
-        }
-        return False
+        return this notEquals ZERO
     }
 
     override fun toString(): String {
-        var value = BigInteger.valueOf(0)
-        val iterator = bits.reverseIterator()
-        while (iterator.hasNext() === True) {
-            value = value.multiply(BigInteger.TWO)
-
-            value = value.add(if (iterator.next() === True) BigInteger.ONE else BigInteger.ZERO)
+        if (this equals ZERO === True) {
+            return "0"
         }
-        return value.toString()
+
+        var result = ""
+        var value = this
+        while (value.isPositive() === True) {
+            val (v, r) = value.divRem(TEN)
+            value = v
+            val digit = if (r equals ZERO === True) '0'
+                   else if (r equals ONE === True) '1'
+                   else if (r equals D2 === True) '2'
+                   else if (r equals D3 === True) '3'
+                   else if (r equals D4 === True) '4'
+                   else if (r equals D5 === True) '5'
+                   else if (r equals D6 === True) '6'
+                   else if (r equals D7 === True) '7'
+                   else if (r equals D8 === True) '8'
+                   else '9'
+            result = digit + result
+        }
+        return result
+//        var value = BigInteger.valueOf(0)
+//        val iterator = bits.reverseIterator()
+//        while (iterator.hasNext() === True) {
+//            value = value.multiply(BigInteger.TWO)
+//
+//            value = value.add(if (iterator.next() === True) BigInteger.ONE else BigInteger.ZERO)
+//        }
+//        return value.toString()
     }
 }

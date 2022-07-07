@@ -14,12 +14,12 @@ class Array<T>(element: T? = null) {
     val lastNode get() = _lastNode
     val last get() = lastNode!!.element!!
 
-    private var _length: UnsignedInt = if (element.isNotNull === True) D1 else D0
+    private var _length: UnsignedInt = if (element.isNotNull === True) UnsignedInt.ONE else UnsignedInt.ZERO
     val length: UnsignedInt get() = _length
     val isEmpty get() = root.isNull
     val isNotEmpty get() = root.isNotNull
 
-    fun append(element: T) {
+    fun append(element: T) : Array<T> {
         if (root.isNull === True) {
             root = ArrayNode(element)
             _lastNode = root
@@ -33,44 +33,47 @@ class Array<T>(element: T? = null) {
             lastNode!!.element = element
         }
         incrementLength()
+        return this
     }
 
     fun pop() {
         _lastNode = lastNode?.previousNode
         if (lastNode.isNull === True) {
             root = null
+            _firstNode = null
         } else if (lastNode === root?.leftChild?.lastNode) {
             root = root?.leftChild
+            lastNode?.nextNode = null
         }
         decrementLength()
     }
 
     private fun incrementLength() {
         _length =
-            if (_length === D0) D1
-            else if (_length === D1) D2
-            else if (_length === D2) D3
-            else if (_length === D3) D4
-            else if (_length === D4) D5
-            else if (_length === D5) D6
-            else if (_length === D6) D7
-            else if (_length === D7) D8
-            else if (_length === D8) D9
-            else _length + D1
+                 if (_length === UnsignedInt.ZERO ) UnsignedInt.ONE
+            else if (_length === UnsignedInt.ONE  ) UnsignedInt.TWO
+            else if (_length === UnsignedInt.TWO  ) UnsignedInt.THREE
+            else if (_length === UnsignedInt.THREE) UnsignedInt.FOUR
+            else if (_length === UnsignedInt.FOUR ) UnsignedInt.FIVE
+            else if (_length === UnsignedInt.FIVE ) UnsignedInt.SIX
+            else if (_length === UnsignedInt.SIX  ) UnsignedInt.SEVEN
+            else if (_length === UnsignedInt.SEVEN) UnsignedInt.EIGHT
+            else if (_length === UnsignedInt.EIGHT) UnsignedInt.NINE
+            else _length + UnsignedInt.ONE
     }
 
     private fun decrementLength() {
         _length =
-                 if (_length === D1) D0
-            else if (_length === D2) D1
-            else if (_length === D3) D2
-            else if (_length === D4) D3
-            else if (_length === D5) D4
-            else if (_length === D6) D5
-            else if (_length === D7) D6
-            else if (_length === D8) D7
-            else if (_length equals D9 === True) D8
-            else _length - D1
+                 if (_length === UnsignedInt.ONE  ) UnsignedInt.ZERO
+            else if (_length === UnsignedInt.TWO  ) UnsignedInt.ONE
+            else if (_length === UnsignedInt.THREE) UnsignedInt.TWO
+            else if (_length === UnsignedInt.FOUR ) UnsignedInt.THREE
+            else if (_length === UnsignedInt.FIVE ) UnsignedInt.FOUR
+            else if (_length === UnsignedInt.SIX  ) UnsignedInt.FIVE
+            else if (_length === UnsignedInt.SEVEN) UnsignedInt.SIX
+            else if (_length === UnsignedInt.EIGHT) UnsignedInt.SEVEN
+            else if (_length equals UnsignedInt.NINE === True) UnsignedInt.EIGHT
+            else _length - UnsignedInt.ONE
     }
 
     private fun doubleCapacity() {
@@ -125,20 +128,6 @@ class Array<T>(element: T? = null) {
                 array.append(value)
             }
             return array
-        }
-
-        val ONE: UnsignedInt
-        val TWO: UnsignedInt
-
-        init {
-            var array = Array(True)
-            ONE = UnsignedInt(array)
-            array._length = ONE
-
-            array = Array(False)
-            array.append(True)
-            TWO = UnsignedInt(array)
-            array._length = TWO
         }
     }
 }

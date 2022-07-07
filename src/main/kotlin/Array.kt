@@ -106,6 +106,18 @@ class Array<T>(element: T? = null) {
         }
     }
 
+    override fun toString(): String {
+        val iterator = iterator()
+        var result = "["
+        while (iterator.hasNext() === True) {
+            result += iterator.next()
+            if (iterator.hasNext() === True) {
+                result += ","
+            }
+        }
+        return "$result]"
+    }
+
     companion object {
         fun<T> repeating(value: T, count: UnsignedInt) : Array<T> {
             val array = Array<T>()

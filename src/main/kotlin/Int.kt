@@ -143,6 +143,47 @@ class UnsignedInt(private val bits: Array<Boolean>) {
         return result
     }
 
+    operator fun div(divisor: UnsignedInt): UnsignedInt {
+        return divRem(divisor).first
+    }
+
+    operator fun rem(divisor: UnsignedInt): UnsignedInt {
+        return divRem(divisor).second
+    }
+
+    fun divRem(divisor: UnsignedInt): Pair<UnsignedInt, UnsignedInt> {
+        val iterator = bits.reverseIterator()
+        var remainder = UnsignedInt(Array(False))
+        val quotient = Array<Boolean>()
+        while (iterator.hasNext() === True) {
+
+            // shift left remainder by one bit
+            if (remainder.isPositive() === True) {
+                remainder.bits.append(False)
+            }
+            var currentNode = remainder.bits.lastNode!!
+            while (currentNode.previousNode !== null) {
+                currentNode.element = currentNode.previousNode!!.element
+                currentNode = currentNode.previousNode!!
+            }
+            remainder.bits.firstNode?.element = iterator.next()
+
+            // shift left quotient by one bit
+            quotient.append(False)
+            currentNode = quotient.lastNode!!
+            while (currentNode.previousNode !== null) {
+                currentNode.element = currentNode.previousNode!!.element
+                currentNode = currentNode.previousNode!!
+            }
+            quotient.firstNode?.element = remainder greaterThanOrEqualTo divisor
+
+            if (quotient.firstNode?.element === True) {
+                remainder -= divisor
+            }
+        }
+        return Pair(UnsignedInt(quotient), remainder)
+    }
+
     infix fun lessThan(other: UnsignedInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) True else False
     }

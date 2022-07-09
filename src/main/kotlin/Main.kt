@@ -1,5 +1,5 @@
 fun main() {
-    var arr = Array<Int>()
+    var arr = List<Int>()
     for (i in 0 until 100) {
         arr(i)
     }

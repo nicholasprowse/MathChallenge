@@ -1,9 +1,9 @@
-class UInt private constructor(private var bits: Array<Boolean>) {
+class UInt private constructor(private var bits: List<Boolean>) {
 
     companion object {
-        val ZERO: UInt = UInt(Array())
-        val ONE: UInt = UInt(Array())
-        val TWO: UInt = UInt(Array())
+        val ZERO: UInt = UInt(List())
+        val ONE: UInt = UInt(List())
+        val TWO: UInt = UInt(List())
         val THREE: UInt
         val FOUR: UInt
         val FIVE: UInt
@@ -14,9 +14,9 @@ class UInt private constructor(private var bits: Array<Boolean>) {
         val TEN: UInt
 
         init {
-            ZERO.bits = Array()
-            ONE.bits = Array(True)
-            TWO.bits = Array(False)(True)
+            ZERO.bits = List()
+            ONE.bits = List(True)
+            TWO.bits = List(False)(True)
 
             THREE = TWO + ONE
             FOUR = THREE + ONE
@@ -43,7 +43,7 @@ class UInt private constructor(private var bits: Array<Boolean>) {
     operator fun plus(other: UInt) : UInt {
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
-        val resultBits = Array<Boolean>()
+        val resultBits = List<Boolean>()
         var carry = False
 
         while(iteratorA.hasNext() or iteratorB.hasNext() === True) {
@@ -62,7 +62,7 @@ class UInt private constructor(private var bits: Array<Boolean>) {
 
     operator fun inc(): UInt {
         val iterator = bits.iterator()
-        val resultBits = Array<Boolean>()
+        val resultBits = List<Boolean>()
         var carry = True
 
         while(iterator.hasNext() === True) {
@@ -81,7 +81,7 @@ class UInt private constructor(private var bits: Array<Boolean>) {
     operator fun minus(other: UInt): UInt {
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
-        val resultBits = Array<Boolean>()
+        val resultBits = List<Boolean>()
         var borrow = False
 
         while(iteratorA.hasNext() or iteratorB.hasNext() === True) {
@@ -101,7 +101,7 @@ class UInt private constructor(private var bits: Array<Boolean>) {
 
     operator fun dec(): UInt {
         val iterator = bits.iterator()
-        val resultBits = Array<Boolean>()
+        val resultBits = List<Boolean>()
         var borrow = True
 
         while(iterator.hasNext() === True) {
@@ -177,9 +177,9 @@ class UInt private constructor(private var bits: Array<Boolean>) {
         return this * TEN + other
     }
 
-    operator fun rangeTo(other: UInt) : Array<UInt> {
+    operator fun rangeTo(other: UInt) : List<UInt> {
         var i = this
-        val array = Array<UInt>()
+        val array = List<UInt>()
         while (i lessThanOrEqualTo other === True) {
             array.push(i)
             i++
@@ -187,9 +187,9 @@ class UInt private constructor(private var bits: Array<Boolean>) {
         return array
     }
 
-    infix fun until(other: UInt) : Array<UInt> {
+    infix fun until(other: UInt) : List<UInt> {
         var i = this
-        val array = Array<UInt>()
+        val array = List<UInt>()
         while (i lessThan other === True) {
             array.push(i)
             i++
@@ -200,8 +200,8 @@ class UInt private constructor(private var bits: Array<Boolean>) {
 
     fun divRem(divisor: UInt): Pair<UInt, UInt> {
         val iterator = bits.reverseIterator()
-        var remainder = UInt(Array())
-        val quotient = Array<Boolean>()
+        var remainder = UInt(List())
+        val quotient = List<Boolean>()
         while (iterator.hasNext() === True) {
             // shift left remainder by one bit
             var bit = iterator.next()
@@ -287,7 +287,7 @@ class UInt private constructor(private var bits: Array<Boolean>) {
             iterator.next()
             x--
         }
-        val newBits = Array<Boolean>()
+        val newBits = List<Boolean>()
         while (iterator.hasNext() === True) {
             newBits.push(iterator.next())
         }
@@ -295,7 +295,7 @@ class UInt private constructor(private var bits: Array<Boolean>) {
     }
 
     infix fun shl(amount: UInt): UInt {
-        val newBits = Array.repeating(False, amount)
+        val newBits = List.repeating(False, amount)
         val iterator = bits.iterator()
         while (iterator.hasNext() === True) {
             newBits.push(iterator.next())
@@ -304,11 +304,11 @@ class UInt private constructor(private var bits: Array<Boolean>) {
     }
 
     // biterator -> bits iterator
-    fun biterator(): Array.ArrayIterator<Boolean> {
+    fun biterator(): List.Iterator<Boolean> {
         return bits.iterator()
     }
 
-    fun reverseBiterator(): Array.ArrayIterator<Boolean> {
+    fun reverseBiterator(): List.Iterator<Boolean> {
         return bits.reverseIterator()
     }
 

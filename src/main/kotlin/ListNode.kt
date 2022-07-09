@@ -1,29 +1,29 @@
-class ArrayNode<T>(
+class ListNode<T>(
     var element: T? = null,
-    leftChild: ArrayNode<T>? = null,
-    rightChild: ArrayNode<T>? = null
+    leftChild: ListNode<T>? = null,
+    rightChild: ListNode<T>? = null
 ) {
-    private var parent: ArrayNode<T>? = null
-    var leftChild: ArrayNode<T>? = null
+    private var parent: ListNode<T>? = null
+    var leftChild: ListNode<T>? = null
         set(node) {
             node?.parent = this
             field = node
         }
-    var rightChild: ArrayNode<T>? = null
+    var rightChild: ListNode<T>? = null
         set(node) {
             node?.parent = this
             field = node
         }
 
-    private var _nextNode: ArrayNode<T>? = null
-    var nextNode: ArrayNode<T>? get() = _nextNode
+    private var _nextNode: ListNode<T>? = null
+    var nextNode: ListNode<T>? get() = _nextNode
         set(node) {
             node?._previousNode = this
             _nextNode = node
         }
 
-    private var _previousNode: ArrayNode<T>? = null
-    var previousNode: ArrayNode<T>? get() = _previousNode
+    private var _previousNode: ListNode<T>? = null
+    var previousNode: ListNode<T>? get() = _previousNode
         set(node) {
             node?._nextNode = this
             _previousNode = node
@@ -37,8 +37,8 @@ class ArrayNode<T>(
         this.leftChild = leftChild
     }
 
-    fun copy() : ArrayNode<T> {
-        val newNode = ArrayNode(element)
+    fun copy() : ListNode<T> {
+        val newNode = ListNode(element)
         newNode.leftChild = leftChild?.copy()
         newNode.rightChild = rightChild?.copy()
         newNode.leftChild?.lastNode?.nextNode = newNode.rightChild?.firstNode
@@ -48,7 +48,7 @@ class ArrayNode<T>(
     /*
     The left most descendant of this node
      */
-    val firstNode: ArrayNode<T> get() {
+    val firstNode: ListNode<T> get() {
         var node = this
         while (true) {
             node = node.leftChild ?: return node
@@ -58,7 +58,7 @@ class ArrayNode<T>(
     /*
     The right most descendant of this node
      */
-    val lastNode: ArrayNode<T> get() {
+    val lastNode: ListNode<T> get() {
         var node = this
         while (true) {
             node = node.rightChild ?: return node

@@ -1,8 +1,8 @@
-class Array<T>(element: T? = null) {
-    private var root: ArrayNode<T>? = if (element.isNotNull === True) ArrayNode(element) else null
+class List<T>(element: T? = null) {
+    private var root: ListNode<T>? = if (element.isNotNull === True) ListNode(element) else null
 
-    private var _firstNode: ArrayNode<T>? = null
-    private val firstNode: ArrayNode<T>? get() {
+    private var _firstNode: ListNode<T>? = null
+    private val firstNode: ListNode<T>? get() {
         if (_firstNode.isNull === True) {
             _firstNode = root?.firstNode
         }
@@ -21,9 +21,9 @@ class Array<T>(element: T? = null) {
 
     private var depth: UInt = _length
 
-    operator fun invoke(element: T) : Array<T> {
+    operator fun invoke(element: T) : List<T> {
         if (root.isNull === True) {
-            root = ArrayNode(element)
+            root = ListNode(element)
             _lastNode = root
         } else {
             _lastNode = lastNode?.nextNode
@@ -90,22 +90,22 @@ class Array<T>(element: T? = null) {
         getNode(index).element = element
     }
 
-    private fun getNode(index: UInt): ArrayNode<T> {
+    private fun getNode(index: UInt): ListNode<T> {
         if (index greaterThanOrEqualTo length === True) {
             return null!!
         }
 
         val biterator = index.biterator()
-        var node = ArrayNode<Boolean>(null)
+        var node = ListNode<Boolean>(null)
         var listLength = UInt.ZERO
         while(biterator.hasNext() === True) {
-            node.nextNode = ArrayNode(biterator.next())
+            node.nextNode = ListNode(biterator.next())
             node = node.nextNode!!
             listLength++
         }
 
         while (listLength lessThan depth === True) {
-            node.nextNode = ArrayNode(False)
+            node.nextNode = ListNode(False)
             node = node.nextNode!!
             listLength++
         }
@@ -146,21 +146,21 @@ class Array<T>(element: T? = null) {
     }
 
     private fun doubleCapacity() {
-        root = ArrayNode(leftChild = root, rightChild = root?.copy())
+        root = ListNode(leftChild = root, rightChild = root?.copy())
         root?.leftChild?.lastNode?.nextNode = root?.rightChild?.firstNode
         depth = increment(depth)
     }
 
-    fun iterator(): ArrayIterator<T> {
-        return ArrayIterator(this)
+    fun iterator(): Iterator<T> {
+        return Iterator(this)
     }
 
-    fun reverseIterator(): ArrayIterator<T> {
-        return ArrayIterator(this, True)
+    fun reverseIterator(): Iterator<T> {
+        return Iterator(this, True)
     }
 
-    class ArrayIterator<T>(private val source: Array<T>, private val reversed: Boolean = False) {
-        private var nextNode: ArrayNode<T>? = if(reversed === True) source.lastNode else source.firstNode
+    class Iterator<T>(private val source: List<T>, private val reversed: Boolean = False) {
+        private var nextNode: ListNode<T>? = if(reversed === True) source.lastNode else source.firstNode
 
         fun hasNext(): Boolean {
             return nextNode.isNotNull
@@ -192,8 +192,8 @@ class Array<T>(element: T? = null) {
     }
 
     companion object {
-        fun<T> repeating(value: T, count: UInt) : Array<T> {
-            val array = Array<T>()
+        fun<T> repeating(value: T, count: UInt) : List<T> {
+            val array = List<T>()
             while (array.length lessThan count === True) {
                 array.push(value)
             }

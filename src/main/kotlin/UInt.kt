@@ -1,20 +1,20 @@
-class UnsignedInt private constructor(private var bits: Array<Boolean>) {
+class UInt private constructor(private var bits: Array<Boolean>) {
 
     companion object {
-        val ZERO: UnsignedInt = UnsignedInt(Array())
-        val ONE: UnsignedInt = UnsignedInt(Array())
-        val TWO: UnsignedInt = UnsignedInt(Array())
-        val THREE: UnsignedInt
-        val FOUR: UnsignedInt
-        val FIVE: UnsignedInt
-        val SIX: UnsignedInt
-        val SEVEN: UnsignedInt
-        val EIGHT: UnsignedInt
-        val NINE: UnsignedInt
-        val TEN: UnsignedInt
+        val ZERO: UInt = UInt(Array())
+        val ONE: UInt = UInt(Array())
+        val TWO: UInt = UInt(Array())
+        val THREE: UInt
+        val FOUR: UInt
+        val FIVE: UInt
+        val SIX: UInt
+        val SEVEN: UInt
+        val EIGHT: UInt
+        val NINE: UInt
+        val TEN: UInt
 
         init {
-            ZERO.bits = Array(False)
+            ZERO.bits = Array()
             ONE.bits = Array(True)
             TWO.bits = Array(False)(True)
 
@@ -31,16 +31,16 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
 
     init {
         // Remove leading zeros
-        if (bits.isNotEmpty === True) {
-            // If the first and last nodes are equal, there is only one node. Since we never want an integer will zero
-            // bits, we stop at this condition. This is a nice way to check the length is 1 without using length
-            while (!bits.last and !bits.lastNode.identicalTo(bits.firstNode) === True) {
+        while (bits.isNotEmpty === True) {
+            if (bits.last === False) {
                 bits.pop()
+            } else {
+                break
             }
         }
     }
 
-    operator fun plus(other: UnsignedInt) : UnsignedInt {
+    operator fun plus(other: UInt) : UInt {
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
         val resultBits = Array<Boolean>()
@@ -57,10 +57,10 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
             resultBits.push(True)
         }
 
-        return UnsignedInt(resultBits)
+        return UInt(resultBits)
     }
 
-    operator fun inc(): UnsignedInt {
+    operator fun inc(): UInt {
         val iterator = bits.iterator()
         val resultBits = Array<Boolean>()
         var carry = True
@@ -75,10 +75,10 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
             resultBits.push(True)
         }
 
-        return UnsignedInt(resultBits)
+        return UInt(resultBits)
     }
 
-    operator fun minus(other: UnsignedInt): UnsignedInt {
+    operator fun minus(other: UInt): UInt {
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
         val resultBits = Array<Boolean>()
@@ -96,10 +96,10 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
             return ZERO
         }
 
-        return UnsignedInt(resultBits)
+        return UInt(resultBits)
     }
 
-    operator fun dec(): UnsignedInt {
+    operator fun dec(): UInt {
         val iterator = bits.iterator()
         val resultBits = Array<Boolean>()
         var borrow = True
@@ -115,10 +115,10 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
             return ZERO
         }
 
-        return UnsignedInt(resultBits)
+        return UInt(resultBits)
     }
 
-    infix fun equals(other: UnsignedInt?) : Boolean {
+    infix fun equals(other: UInt?) : Boolean {
         if (other === null) {
             return False
         }
@@ -134,7 +134,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         return !(iteratorA.hasNext() or iteratorB.hasNext())
     }
 
-    infix fun notEquals(other: UnsignedInt?) : Boolean {
+    infix fun notEquals(other: UInt?) : Boolean {
         return !equals(other)
     }
 
@@ -143,7 +143,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
     override fun equals(other: Any?): kotlin.Boolean { throw Exception() }
     override fun hashCode(): Int { throw Exception() }
 
-    operator fun times(other: UnsignedInt) : UnsignedInt {
+    operator fun times(other: UInt) : UInt {
         var a = this
         var b = other
         // We require order of A to be less than order of B
@@ -160,32 +160,26 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
                 result += b
             }
             // shift left b by one bit
-            b.bits.push(False)
-            var currentNode = b.bits.lastNode!!
-            while (currentNode.previousNode !== null) {
-                currentNode.element = currentNode.previousNode!!.element
-                currentNode = currentNode.previousNode!!
-            }
-            b.bits.firstNode?.element = False
+            b.bits.prepend(False)
         }
         return result
     }
 
-    operator fun div(divisor: UnsignedInt): UnsignedInt {
+    operator fun div(divisor: UInt): UInt {
         return divRem(divisor).first
     }
 
-    operator fun rem(divisor: UnsignedInt): UnsignedInt {
+    operator fun rem(divisor: UInt): UInt {
         return divRem(divisor).second
     }
 
-    operator fun invoke(other: UnsignedInt) : UnsignedInt {
+    operator fun invoke(other: UInt) : UInt {
         return this * TEN + other
     }
 
-    operator fun rangeTo(other: UnsignedInt) : Array<UnsignedInt> {
+    operator fun rangeTo(other: UInt) : Array<UInt> {
         var i = this
-        val array = Array<UnsignedInt>()
+        val array = Array<UInt>()
         while (i lessThanOrEqualTo other === True) {
             array.push(i)
             i++
@@ -193,9 +187,9 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         return array
     }
 
-    infix fun until(other: UnsignedInt) : Array<UnsignedInt> {
+    infix fun until(other: UInt) : Array<UInt> {
         var i = this
-        val array = Array<UnsignedInt>()
+        val array = Array<UInt>()
         while (i lessThan other === True) {
             array.push(i)
             i++
@@ -204,61 +198,49 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
     }
 
 
-    fun divRem(divisor: UnsignedInt): Pair<UnsignedInt, UnsignedInt> {
+    fun divRem(divisor: UInt): Pair<UInt, UInt> {
         val iterator = bits.reverseIterator()
-        var remainder = UnsignedInt(Array(False))
+        var remainder = UInt(Array())
         val quotient = Array<Boolean>()
         while (iterator.hasNext() === True) {
-
             // shift left remainder by one bit
-            if (remainder.isPositive() === True) {
-                remainder.bits.push(False)
+            var bit = iterator.next()
+            if (remainder.bits.isNotEmpty or bit === True) {
+                remainder.bits.prepend(bit)
             }
-            var currentNode = remainder.bits.lastNode!!
-            while (currentNode.previousNode !== null) {
-                currentNode.element = currentNode.previousNode!!.element
-                currentNode = currentNode.previousNode!!
-            }
-            remainder.bits.firstNode?.element = iterator.next()
 
             // shift left quotient by one bit
-            quotient.push(False)
-            currentNode = quotient.lastNode!!
-            while (currentNode.previousNode !== null) {
-                currentNode.element = currentNode.previousNode!!.element
-                currentNode = currentNode.previousNode!!
-            }
-            quotient.firstNode?.element = remainder greaterThanOrEqualTo divisor
-
-            if (quotient.firstNode?.element === True) {
+            bit = remainder greaterThanOrEqualTo divisor
+            quotient.prepend(bit)
+            if (bit === True) {
                 remainder -= divisor
             }
         }
-        return Pair(UnsignedInt(quotient), remainder)
+        return Pair(UInt(quotient), remainder)
     }
 
-    infix fun lessThan(other: UnsignedInt): Boolean {
+    infix fun lessThan(other: UInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) True else False
     }
 
-    infix fun greaterThan(other: UnsignedInt): Boolean {
+    infix fun greaterThan(other: UInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.GREATER) True else False
     }
 
-    infix fun lessThanOrEqualTo(other: UnsignedInt): Boolean {
+    infix fun lessThanOrEqualTo(other: UInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.GREATER) False else True
     }
 
-    infix fun greaterThanOrEqualTo(other: UnsignedInt): Boolean {
+    infix fun greaterThanOrEqualTo(other: UInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) False else True
     }
 
-    private fun compareTo(other: UnsignedInt): ComparisonResult {
+    private fun compareTo(other: UInt): ComparisonResult {
         // Small numbers are handled separately, as they cause problems
-        if (this equals ZERO and (other notEquals ZERO) === True) {
+        if (bits.isEmpty and other.bits.isNotEmpty === True) {
             return ComparisonResult.LESS
         }
-        if (other equals ZERO and (this notEquals ZERO) === True) {
+        if (other.bits.isEmpty and bits.isNotEmpty === True) {
             return ComparisonResult.GREATER
         }
         if (this equals ONE and (other notEquals ONE) === True) {
@@ -274,7 +256,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         }
     }
 
-    private fun compareWithEqualBitSize(other: UnsignedInt): ComparisonResult {
+    private fun compareWithEqualBitSize(other: UInt): ComparisonResult {
         val iteratorA = bits.reverseIterator()
         val iteratorB = other.bits.reverseIterator()
         while (iteratorA.hasNext() === True) {
@@ -294,8 +276,31 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         LESS, EQUAL, GREATER
     }
 
-    fun isPositive() : Boolean {
-        return this notEquals ZERO
+    fun isPositive(): Boolean {
+        return bits.isNotEmpty
+    }
+    
+    infix fun shr(amount: UInt): UInt {
+        val iterator = bits.iterator()
+        var x = amount
+        while (iterator.hasNext() and x.isPositive() === True) {
+            iterator.next()
+            x--
+        }
+        val newBits = Array<Boolean>()
+        while (iterator.hasNext() === True) {
+            newBits.push(iterator.next())
+        }
+        return UInt(newBits)
+    }
+
+    infix fun shl(amount: UInt): UInt {
+        val newBits = Array.repeating(False, amount)
+        val iterator = bits.iterator()
+        while (iterator.hasNext() === True) {
+            newBits.push(iterator.next())
+        }
+        return UInt(newBits)
     }
 
     // biterator -> bits iterator
@@ -308,7 +313,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
     }
 
     override fun toString(): String {
-        if (this equals ZERO === True) {
+        if (bits.isEmpty === True) {
             return "0"
         }
 
@@ -317,15 +322,15 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         while (value.isPositive() === True) {
             val (v, r) = value.divRem(TEN)
             value = v
-            val digit = if (r equals ZERO === True) '0'
-                   else if (r equals ONE === True) '1'
-                   else if (r equals D2 === True) '2'
-                   else if (r equals D3 === True) '3'
-                   else if (r equals D4 === True) '4'
-                   else if (r equals D5 === True) '5'
-                   else if (r equals D6 === True) '6'
-                   else if (r equals D7 === True) '7'
-                   else if (r equals D8 === True) '8'
+            val digit = if (r equals ZERO  === True) '0'
+                   else if (r equals ONE   === True) '1'
+                   else if (r equals TWO   === True) '2'
+                   else if (r equals THREE === True) '3'
+                   else if (r equals FOUR  === True) '4'
+                   else if (r equals FIVE  === True) '5'
+                   else if (r equals SIX   === True) '6'
+                   else if (r equals SEVEN === True) '7'
+                   else if (r equals EIGHT === True) '8'
                    else '9'
             result = digit + result
         }

@@ -2,7 +2,7 @@ class Array<T>(element: T? = null) {
     private var root: ArrayNode<T>? = if (element.isNotNull === True) ArrayNode(element) else null
 
     private var _firstNode: ArrayNode<T>? = null
-    val firstNode: ArrayNode<T>? get() {
+    private val firstNode: ArrayNode<T>? get() {
         if (_firstNode.isNull === True) {
             _firstNode = root?.firstNode
         }
@@ -11,15 +11,15 @@ class Array<T>(element: T? = null) {
     val first get() = firstNode!!.element!!
 
     private var _lastNode = root
-    val lastNode get() = _lastNode
+    private val lastNode get() = _lastNode
     val last get() = lastNode!!.element!!
 
-    private var _length: UnsignedInt = if (element.isNotNull === True) UnsignedInt.ONE else UnsignedInt.ZERO
-    val length: UnsignedInt get() = _length
+    private var _length: UInt = if (element.isNotNull === True) UInt.ONE else UInt.ZERO
+    val length: UInt get() = _length
     val isEmpty get() = root.isNull
     val isNotEmpty get() = root.isNotNull
 
-    private var depth: UnsignedInt = _length
+    private var depth: UInt = _length
 
     operator fun invoke(element: T) : Array<T> {
         if (root.isNull === True) {
@@ -55,14 +55,49 @@ class Array<T>(element: T? = null) {
         _length = decrement(_length)
     }
 
-    operator fun get(index: UnsignedInt) : T {
+    fun insert(element: T, index: UInt) {
+        if (index equals length === True) {
+            push(element)
+            return
+        }
+
+        val node = getNode(index)
+        // Shift everything after the node to the left
+        push(element) // Doesn't matter what we push, it will be overwritten
+        var currentNode = lastNode!!
+        while (currentNode !== node) {
+            currentNode.element = currentNode.previousNode!!.element
+            currentNode = currentNode.previousNode!!
+        }
+        node.element = element
+    }
+
+    fun prepend(element: T) {
+        push(element) // Doesn't matter what we push, it will be overwritten
+        var currentNode = lastNode!!
+        while (currentNode !== firstNode) {
+            currentNode.element = currentNode.previousNode!!.element
+            currentNode = currentNode.previousNode!!
+        }
+        firstNode!!.element = element
+    }
+
+    operator fun get(index: UInt) : T {
+        return getNode(index).element!!
+    }
+
+    operator fun set(index: UInt, element: T) {
+        getNode(index).element = element
+    }
+
+    private fun getNode(index: UInt): ArrayNode<T> {
         if (index greaterThanOrEqualTo length === True) {
             return null!!
         }
 
         val biterator = index.biterator()
-        var node = ArrayNode(biterator.next())      // UnsignedInt biterator is guaranteed to have at least one element
-        var listLength = UnsignedInt.ONE
+        var node = ArrayNode<Boolean>(null)
+        var listLength = UInt.ZERO
         while(biterator.hasNext() === True) {
             node.nextNode = ArrayNode(biterator.next())
             node = node.nextNode!!
@@ -75,39 +110,39 @@ class Array<T>(element: T? = null) {
             listLength++
         }
 
-        var treeNode = if (node.element === True) root?.rightChild else root?.leftChild
-        while (node.previousNode.isNotNull === True) {
-            node = node.previousNode!!
+        var treeNode = root
+        while (node.element.isNotNull === True) {
             treeNode = if (node.element === True) treeNode?.rightChild else treeNode?.leftChild
+            node = node.previousNode!!
         }
 
-        return treeNode!!.element!!
+        return treeNode!!
     }
 
-    private fun increment(value: UnsignedInt) : UnsignedInt {
-        return   if (value === UnsignedInt.ZERO ) UnsignedInt.ONE
-            else if (value === UnsignedInt.ONE  ) UnsignedInt.TWO
-            else if (value === UnsignedInt.TWO  ) UnsignedInt.THREE
-            else if (value === UnsignedInt.THREE) UnsignedInt.FOUR
-            else if (value === UnsignedInt.FOUR ) UnsignedInt.FIVE
-            else if (value === UnsignedInt.FIVE ) UnsignedInt.SIX
-            else if (value === UnsignedInt.SIX  ) UnsignedInt.SEVEN
-            else if (value === UnsignedInt.SEVEN) UnsignedInt.EIGHT
-            else if (value === UnsignedInt.EIGHT) UnsignedInt.NINE
-            else value + UnsignedInt.ONE
+    private fun increment(value: UInt) : UInt {
+        return   if (value === UInt.ZERO ) UInt.ONE
+            else if (value === UInt.ONE  ) UInt.TWO
+            else if (value === UInt.TWO  ) UInt.THREE
+            else if (value === UInt.THREE) UInt.FOUR
+            else if (value === UInt.FOUR ) UInt.FIVE
+            else if (value === UInt.FIVE ) UInt.SIX
+            else if (value === UInt.SIX  ) UInt.SEVEN
+            else if (value === UInt.SEVEN) UInt.EIGHT
+            else if (value === UInt.EIGHT) UInt.NINE
+            else value + UInt.ONE
     }
 
-    private fun decrement(value: UnsignedInt) : UnsignedInt {
-        return   if (value === UnsignedInt.ONE  ) UnsignedInt.ZERO
-            else if (value === UnsignedInt.TWO  ) UnsignedInt.ONE
-            else if (value === UnsignedInt.THREE) UnsignedInt.TWO
-            else if (value === UnsignedInt.FOUR ) UnsignedInt.THREE
-            else if (value === UnsignedInt.FIVE ) UnsignedInt.FOUR
-            else if (value === UnsignedInt.SIX  ) UnsignedInt.FIVE
-            else if (value === UnsignedInt.SEVEN) UnsignedInt.SIX
-            else if (value === UnsignedInt.EIGHT) UnsignedInt.SEVEN
-            else if (value equals UnsignedInt.NINE === True) UnsignedInt.EIGHT
-            else value - UnsignedInt.ONE
+    private fun decrement(value: UInt) : UInt {
+        return   if (value === UInt.ONE  ) UInt.ZERO
+            else if (value === UInt.TWO  ) UInt.ONE
+            else if (value === UInt.THREE) UInt.TWO
+            else if (value === UInt.FOUR ) UInt.THREE
+            else if (value === UInt.FIVE ) UInt.FOUR
+            else if (value === UInt.SIX  ) UInt.FIVE
+            else if (value === UInt.SEVEN) UInt.SIX
+            else if (value === UInt.EIGHT) UInt.SEVEN
+            else if (value equals UInt.NINE === True) UInt.EIGHT
+            else value - UInt.ONE
     }
 
     private fun doubleCapacity() {
@@ -157,7 +192,7 @@ class Array<T>(element: T? = null) {
     }
 
     companion object {
-        fun<T> repeating(value: T, count: UnsignedInt) : Array<T> {
+        fun<T> repeating(value: T, count: UInt) : Array<T> {
             val array = Array<T>()
             while (array.length lessThan count === True) {
                 array.push(value)

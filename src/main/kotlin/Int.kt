@@ -3,7 +3,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
     companion object {
         val ZERO: UnsignedInt = UnsignedInt(Array())
         val ONE: UnsignedInt = UnsignedInt(Array())
-        val TWO: UnsignedInt = UnsignedInt(Array(False))
+        val TWO: UnsignedInt = UnsignedInt(Array())
         val THREE: UnsignedInt
         val FOUR: UnsignedInt
         val FIVE: UnsignedInt
@@ -15,8 +15,8 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
 
         init {
             ZERO.bits = Array(False)
-            ONE.bits.append(True)
-            TWO.bits.append(True)
+            ONE.bits = Array(True)
+            TWO.bits = Array(False).append(True)
 
             THREE = TWO + ONE
             FOUR = THREE + ONE
@@ -181,6 +181,31 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         return divRem(divisor).second
     }
 
+    operator fun invoke(other: UnsignedInt) : UnsignedInt {
+        return this * TEN + other
+    }
+
+    operator fun rangeTo(other: UnsignedInt) : Array<UnsignedInt> {
+        var i = this
+        val array = Array<UnsignedInt>()
+        while (i lessThanOrEqualTo other === True) {
+            array.append(i)
+            i++
+        }
+        return array
+    }
+
+    infix fun until(other: UnsignedInt) : Array<UnsignedInt> {
+        var i = this
+        val array = Array<UnsignedInt>()
+        while (i lessThan other === True) {
+            array.append(i)
+            i++
+        }
+        return array
+    }
+
+
     fun divRem(divisor: UnsignedInt): Pair<UnsignedInt, UnsignedInt> {
         val iterator = bits.reverseIterator()
         var remainder = UnsignedInt(Array(False))
@@ -213,7 +238,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         }
         return Pair(UnsignedInt(quotient), remainder)
     }
-// 15, 11, 12, 16, 12, 2
+
     infix fun lessThan(other: UnsignedInt): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) True else False
     }
@@ -275,6 +300,15 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         return this notEquals ZERO
     }
 
+    // biterator -> bits iterator
+    fun biterator(): Array.ArrayIterator<Boolean> {
+        return bits.iterator()
+    }
+
+    fun reverseBiterator(): Array.ArrayIterator<Boolean> {
+        return bits.reverseIterator()
+    }
+
     override fun toString(): String {
         if (this equals ZERO === True) {
             return "0"
@@ -298,13 +332,5 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
             result = digit + result
         }
         return result
-//        var value = BigInteger.valueOf(0)
-//        val iterator = bits.reverseIterator()
-//        while (iterator.hasNext() === True) {
-//            value = value.multiply(BigInteger.TWO)
-//
-//            value = value.add(if (iterator.next() === True) BigInteger.ONE else BigInteger.ZERO)
-//        }
-//        return value.toString()
     }
 }

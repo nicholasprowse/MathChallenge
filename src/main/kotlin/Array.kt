@@ -19,6 +19,8 @@ class Array<T>(element: T? = null) {
     val isEmpty get() = root.isNull
     val isNotEmpty get() = root.isNotNull
 
+    private var depth: UnsignedInt = _length
+
     fun append(element: T) : Array<T> {
         if (root.isNull === True) {
             root = ArrayNode(element)
@@ -32,7 +34,7 @@ class Array<T>(element: T? = null) {
             }
             lastNode!!.element = element
         }
-        incrementLength()
+        _length = increment(_length)
         return this
     }
 
@@ -44,41 +46,70 @@ class Array<T>(element: T? = null) {
         } else if (lastNode === root?.leftChild?.lastNode) {
             root = root?.leftChild
             lastNode?.nextNode = null
+            depth = decrement(depth)
         }
-        decrementLength()
+        _length = decrement(_length)
     }
 
-    private fun incrementLength() {
-        _length =
-                 if (_length === UnsignedInt.ZERO ) UnsignedInt.ONE
-            else if (_length === UnsignedInt.ONE  ) UnsignedInt.TWO
-            else if (_length === UnsignedInt.TWO  ) UnsignedInt.THREE
-            else if (_length === UnsignedInt.THREE) UnsignedInt.FOUR
-            else if (_length === UnsignedInt.FOUR ) UnsignedInt.FIVE
-            else if (_length === UnsignedInt.FIVE ) UnsignedInt.SIX
-            else if (_length === UnsignedInt.SIX  ) UnsignedInt.SEVEN
-            else if (_length === UnsignedInt.SEVEN) UnsignedInt.EIGHT
-            else if (_length === UnsignedInt.EIGHT) UnsignedInt.NINE
-            else _length + UnsignedInt.ONE
+    operator fun get(index: UnsignedInt) : T {
+        if (index greaterThanOrEqualTo length === True) {
+            return null!!
+        }
+
+        val biterator = index.biterator()
+        var node = ArrayNode(biterator.next())      // UnsignedInt biterator is guaranteed to have at least one element
+        var listLength = UnsignedInt.ONE
+        while(biterator.hasNext() === True) {
+            node.nextNode = ArrayNode(biterator.next())
+            node = node.nextNode!!
+            listLength++
+        }
+
+        while (listLength lessThan depth === True) {
+            node.nextNode = ArrayNode(False)
+            node = node.nextNode!!
+            listLength++
+        }
+
+        var treeNode = if (node.element === True) root?.rightChild else root?.leftChild
+        while (node.previousNode.isNotNull === True) {
+            node = node.previousNode!!
+            treeNode = if (node.element === True) treeNode?.rightChild else treeNode?.leftChild
+        }
+
+        return treeNode!!.element!!
     }
 
-    private fun decrementLength() {
-        _length =
-                 if (_length === UnsignedInt.ONE  ) UnsignedInt.ZERO
-            else if (_length === UnsignedInt.TWO  ) UnsignedInt.ONE
-            else if (_length === UnsignedInt.THREE) UnsignedInt.TWO
-            else if (_length === UnsignedInt.FOUR ) UnsignedInt.THREE
-            else if (_length === UnsignedInt.FIVE ) UnsignedInt.FOUR
-            else if (_length === UnsignedInt.SIX  ) UnsignedInt.FIVE
-            else if (_length === UnsignedInt.SEVEN) UnsignedInt.SIX
-            else if (_length === UnsignedInt.EIGHT) UnsignedInt.SEVEN
-            else if (_length equals UnsignedInt.NINE === True) UnsignedInt.EIGHT
-            else _length - UnsignedInt.ONE
+    private fun increment(value: UnsignedInt) : UnsignedInt {
+        return   if (value === UnsignedInt.ZERO ) UnsignedInt.ONE
+            else if (value === UnsignedInt.ONE  ) UnsignedInt.TWO
+            else if (value === UnsignedInt.TWO  ) UnsignedInt.THREE
+            else if (value === UnsignedInt.THREE) UnsignedInt.FOUR
+            else if (value === UnsignedInt.FOUR ) UnsignedInt.FIVE
+            else if (value === UnsignedInt.FIVE ) UnsignedInt.SIX
+            else if (value === UnsignedInt.SIX  ) UnsignedInt.SEVEN
+            else if (value === UnsignedInt.SEVEN) UnsignedInt.EIGHT
+            else if (value === UnsignedInt.EIGHT) UnsignedInt.NINE
+            else value + UnsignedInt.ONE
+    }
+
+    private fun decrement(value: UnsignedInt) : UnsignedInt {
+        return   if (value === UnsignedInt.ONE  ) UnsignedInt.ZERO
+            else if (value === UnsignedInt.TWO  ) UnsignedInt.ONE
+            else if (value === UnsignedInt.THREE) UnsignedInt.TWO
+            else if (value === UnsignedInt.FOUR ) UnsignedInt.THREE
+            else if (value === UnsignedInt.FIVE ) UnsignedInt.FOUR
+            else if (value === UnsignedInt.SIX  ) UnsignedInt.FIVE
+            else if (value === UnsignedInt.SEVEN) UnsignedInt.SIX
+            else if (value === UnsignedInt.EIGHT) UnsignedInt.SEVEN
+            else if (value equals UnsignedInt.NINE === True) UnsignedInt.EIGHT
+            else value - UnsignedInt.ONE
     }
 
     private fun doubleCapacity() {
         root = ArrayNode(leftChild = root, rightChild = root?.copy())
         root?.leftChild?.lastNode?.nextNode = root?.rightChild?.firstNode
+        depth = increment(depth)
     }
 
     fun iterator(): ArrayIterator<T> {
@@ -115,7 +146,7 @@ class Array<T>(element: T? = null) {
         while (iterator.hasNext() === True) {
             result += iterator.next()
             if (iterator.hasNext() === True) {
-                result += ","
+                result += ", "
             }
         }
         return "$result]"
@@ -124,7 +155,7 @@ class Array<T>(element: T? = null) {
     companion object {
         fun<T> repeating(value: T, count: UnsignedInt) : Array<T> {
             val array = Array<T>()
-            while (count.isPositive() === True) {
+            while (array.length lessThan count === True) {
                 array.append(value)
             }
             return array

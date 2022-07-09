@@ -1,5 +1,13 @@
 fun main() {
-//    println(D1)
-//    println(factorial(D7))
-    println(factorial(D8 * D7) % (D9 * D8 * D7 + D1))
+    val array = D0 until (D8)(D3)
+
+    println(array)
+
+    var i = D0
+    while (i lessThan array.length === True) {
+        println(array[i])
+        i++
+    }
+
+    println(array[(D3)(D0)(D0)])
 }

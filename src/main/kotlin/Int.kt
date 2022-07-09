@@ -16,7 +16,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         init {
             ZERO.bits = Array(False)
             ONE.bits = Array(True)
-            TWO.bits = Array(False).append(True)
+            TWO.bits = Array(False)(True)
 
             THREE = TWO + ONE
             FOUR = THREE + ONE
@@ -32,12 +32,10 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
     init {
         // Remove leading zeros
         if (bits.isNotEmpty === True) {
-            while (bits.last === False) {
+            // If the first and last nodes are equal, there is only one node. Since we never want an integer will zero
+            // bits, we stop at this condition. This is a nice way to check the length is 1 without using length
+            while (!bits.last and !bits.lastNode.identicalTo(bits.firstNode) === True) {
                 bits.pop()
-                if (bits.isEmpty === True) {
-                    bits.append(False)
-                    break
-                }
             }
         }
     }
@@ -51,12 +49,12 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         while(iteratorA.hasNext() or iteratorB.hasNext() === True) {
             val a = if (iteratorA.hasNext() === True) iteratorA.next() else False
             val b = if (iteratorB.hasNext() === True) iteratorB.next() else False
-            resultBits.append(carry xor (a xor b))
+            resultBits.push(carry xor (a xor b))
             carry = (a and b) or (carry and (a xor b))
         }
 
         if (carry === True) {
-            resultBits.append(True)
+            resultBits.push(True)
         }
 
         return UnsignedInt(resultBits)
@@ -69,12 +67,12 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
 
         while(iterator.hasNext() === True) {
             val a = iterator.next()
-            resultBits.append(carry xor a)
+            resultBits.push(carry xor a)
             carry = carry and a
         }
 
         if (carry === True) {
-            resultBits.append(True)
+            resultBits.push(True)
         }
 
         return UnsignedInt(resultBits)
@@ -89,7 +87,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         while(iteratorA.hasNext() or iteratorB.hasNext() === True) {
             val a = if (iteratorA.hasNext() === True) iteratorA.next() else False
             val b = if (iteratorB.hasNext() === True) iteratorB.next() else False
-            resultBits.append(borrow xor (a xor b))
+            resultBits.push(borrow xor (a xor b))
             borrow = (!a and b) or (borrow and (!a xor b))
         }
         // If there is a borrow at the end, then B is greater than A
@@ -108,7 +106,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
 
         while(iterator.hasNext() === True) {
             val a = iterator.next()
-            resultBits.append(borrow xor a)
+            resultBits.push(borrow xor a)
             borrow = borrow and !a
         }
         // If there is a borrow at the end, then we are decrementing 0
@@ -162,7 +160,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
                 result += b
             }
             // shift left b by one bit
-            b.bits.append(False)
+            b.bits.push(False)
             var currentNode = b.bits.lastNode!!
             while (currentNode.previousNode !== null) {
                 currentNode.element = currentNode.previousNode!!.element
@@ -189,7 +187,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         var i = this
         val array = Array<UnsignedInt>()
         while (i lessThanOrEqualTo other === True) {
-            array.append(i)
+            array.push(i)
             i++
         }
         return array
@@ -199,7 +197,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
         var i = this
         val array = Array<UnsignedInt>()
         while (i lessThan other === True) {
-            array.append(i)
+            array.push(i)
             i++
         }
         return array
@@ -214,7 +212,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
 
             // shift left remainder by one bit
             if (remainder.isPositive() === True) {
-                remainder.bits.append(False)
+                remainder.bits.push(False)
             }
             var currentNode = remainder.bits.lastNode!!
             while (currentNode.previousNode !== null) {
@@ -224,7 +222,7 @@ class UnsignedInt private constructor(private var bits: Array<Boolean>) {
             remainder.bits.firstNode?.element = iterator.next()
 
             // shift left quotient by one bit
-            quotient.append(False)
+            quotient.push(False)
             currentNode = quotient.lastNode!!
             while (currentNode.previousNode !== null) {
                 currentNode.element = currentNode.previousNode!!.element

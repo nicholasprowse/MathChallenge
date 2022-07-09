@@ -5,36 +5,19 @@ class Boolean private constructor() {
     }
 
     infix fun or(other: Boolean) : Boolean {
-        if (this === True) {
-            return True
-        }
-        if (other === True) {
-            return True
-        }
-        return False
+        return if (this === True) True else other
     }
 
     infix fun and(other: Boolean) : Boolean {
-        if (this === True) {
-            if (other === True) {
-                return True
-            }
-        }
-        return False
+        return if (this === True) other else False
     }
 
     infix fun xor(other: Boolean) : Boolean {
-        if (this === other) {
-            return False
-        }
-        return True
+        return if (this === other) False else True
     }
 
     operator fun not() : Boolean {
-        if (this === True) {
-            return False
-        }
-        return True
+        return if (this === True) False else True
     }
 
     override fun toString(): String {

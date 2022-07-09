@@ -21,7 +21,7 @@ class Array<T>(element: T? = null) {
 
     private var depth: UnsignedInt = _length
 
-    fun append(element: T) : Array<T> {
+    operator fun invoke(element: T) : Array<T> {
         if (root.isNull === True) {
             root = ArrayNode(element)
             _lastNode = root
@@ -36,6 +36,10 @@ class Array<T>(element: T? = null) {
         }
         _length = increment(_length)
         return this
+    }
+
+    fun push(element: T) {
+        this(element)
     }
 
     fun pop() {
@@ -156,7 +160,7 @@ class Array<T>(element: T? = null) {
         fun<T> repeating(value: T, count: UnsignedInt) : Array<T> {
             val array = Array<T>()
             while (array.length lessThan count === True) {
-                array.append(value)
+                array.push(value)
             }
             return array
         }

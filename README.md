@@ -5,8 +5,6 @@ The goal of this project is to create a library of basic math functions using ab
 This means even primitive types and arrays are forbidden, as are all operators, except reference equality (`===`). Arrays are also not allowed, 
 so collections must be built from scratch without any preexisting functionalty.
 
-At the moment, I am not certain if this is even possible to do without arrays, but I have ideas about how to achieve it so I believe that this will be possible
-
 ## Rules:
   - No types are allows except the ones I define. This excludes everything, even primitive types. There are two exceptions to this 
     - The `toString` method is allowed to use `Char` and `String` internally, and is allowed to return a `String`. `toString` is only allowed to 
@@ -29,4 +27,61 @@ At the moment, I am not certain if this is even possible to do without arrays, b
   - Random number generator: Random int in range and random float of arbitrary precision
   - There is no requirement on speed. Due to the complexity of implementing all of this with no builtin types, it is not expected to be
   performant, however it must be precise and accurate
-    
+
+## Progress
+At the time of writing, I have successfully created a Boolean, List and UnsignedInt class, all with commonly used functionality
+
+How was this done without any references to types I didn't create?
+
+The first step is to create a Boolean class with a True and False instance. The Boolean class has a private constructor, so the only instance of this class that will ever exist are True and False. Note that this class has no properties. It doesn't need any, because all we need to be able to do is check if an instance of Boolean is equivalent to True or False
+
+    class Boolean private constructor() {
+        companion object {
+          val True = Boolean()
+          val False = Boolean()
+        }
+        ...
+
+The boolean operators can all be implemented using basic properties of if statements. The boolean operators cannot be overloaded (except not), so I have opted for named infix functions instead. We also add a toString() method to aid in debugging and outputting results
+
+    infix fun or(other: Boolean) : Boolean {
+        return if (this === True) True else other
+    }
+
+    infix fun and(other: Boolean) : Boolean {
+        return if (this === True) other else False
+    }
+
+    infix fun xor(other: Boolean) : Boolean {
+        return if (this === other) False else True
+    }
+
+    operator fun not() : Boolean {
+        return if (this === True) False else True
+    }
+
+    override fun toString(): String {
+        return if (this === True) "true" else "false"
+    }
+
+Now we have a Boolean class, with all the typical operators. That was just the warmup. Now comes the hard part of creating lists and integers. The challenge here is that you cannot create one in isolation. Lists depend on integers as they have an integer length, and they are indexed by integers, while integers are represented by an list of bits. We need to be very careful when creating these classes that we don't create infinite recursive loops due to this circular dependency.
+
+To start with, we create a very basic list. Before we have an integer class, our list cannot have a length, and we will not be able to index it. But how do we create an list without any reference to an array in the first place? A first thought would be to use a linked list. This is a data structure consisting of nodes, where each node has a value, and a reference to the next (and maybe previous) node. This allows us to store a collection of objects without the need for arrays or integers. We just need to keep a reference to the first node, then we can reach any other node by repeatedly moving to the next node. This would work, however, it poses a problem. In order to retrieve the 3254th element in the list, we have to traverse through 3254 nodes just to get it. For large lists, this will slow us down a lot, especially since indexing a list is such a fundamental and common task.
+
+A better option is to use a binary tree. Each node has two children: a left and a right child. Only the nodes at the bottom of the tree have values associated with them. e.g. Say we have a list with 8 elements. The root node has two children, each of which have two children. That is the root has 4 grandchildren. Each of these has 2 children, for a total of 8 great grandchildren. Since there are 8 nodes on this layer, there is no need for further layers. So, within each of these bottom nodes we store an element. 
+
+But why is this better? Say we want to retrieve element with index 5. This is the 5th element from the left on the bottom row of the tree. Starting from the root node, and traversing down through the children, we will find that we need to go right, then left, then right. Given an index, how do we know the sequence of lefts and rights to get to the element? Listing them all out for the case of a list of size 8 given us
+- 0: LLL
+- 1: LLR
+- 2: LRL
+- 3: LRR
+- 4: RLL
+- 5: RLR
+- 6: RRL
+- 7: RRR
+
+Notice a pattern? It is simply the binary representation of the index. So for any index, we start with the most significant bit and iterate through to the least significant bit. For each 0 bit, move to the nodes left child. For each 1 bit, move to the nodes right child. Now, we can see why this is superior to a linked list. To get the 8th element in a linked list, we would have to traverse through 8 nodes. However, with the binary tree, we only have to go through 3. It only gets better for larger lists. For a list of 1 million elements, the binary tree only requires 20 node traversals to get any element, but for a linked list we may have to go through a million nodes! 
+
+The one downside to this strategy is that it is not as easy to go from one element to the next. With a linked list, if you had one node, it is trivial to get the next. But with this structure, you would have to traverse up the tree until the next node shares an ancestor with the current one, and then you have to traverse back down. This is doable, but a much simpler approach is to use the linked list concept in our tree. We still have the same tree setup, but each node on the bottom layer has a reference to the next and previous node. That way it is possible to iterate through the elements very easily, like you would with a linked list, but it is still effiecient to retrieve an element by an index.
+
+Explanation of the implementation coming soon!

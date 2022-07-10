@@ -1,6 +1,6 @@
 class Boolean private constructor() {
     companion object {
-        val True = Boolean()
+        val  True = Boolean()
         val False = Boolean()
     }
 

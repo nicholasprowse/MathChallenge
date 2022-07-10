@@ -1,17 +1,17 @@
 class UInt private constructor(private var bits: List<Boolean>) {
 
     companion object {
-        val ZERO: UInt = UInt(List())
-        val ONE: UInt = UInt(List())
-        val TWO: UInt = UInt(List())
+        val  ZERO: UInt = UInt(List())
+        val   ONE: UInt = UInt(List())
+        val   TWO: UInt = UInt(List())
         val THREE: UInt
-        val FOUR: UInt
-        val FIVE: UInt
-        val SIX: UInt
+        val  FOUR: UInt
+        val  FIVE: UInt
+        val   SIX: UInt
         val SEVEN: UInt
         val EIGHT: UInt
-        val NINE: UInt
-        val TEN: UInt
+        val  NINE: UInt
+        val   TEN: UInt
 
         init {
             ZERO.bits = List()
@@ -141,7 +141,7 @@ class UInt private constructor(private var bits: List<Boolean>) {
     // This is needed to suppress a warning about the above method.
     // It is not used as it violates the rules of the challenge
     override fun equals(other: Any?): kotlin.Boolean { throw Exception() }
-    override fun hashCode(): Int { throw Exception() }
+    override fun hashCode(): kotlin.Int { throw Exception() }
 
     operator fun times(other: UInt) : UInt {
         var a = this
@@ -204,15 +204,14 @@ class UInt private constructor(private var bits: List<Boolean>) {
         val quotient = List<Boolean>()
         while (iterator.hasNext() === True) {
             // shift left remainder by one bit
-            var bit = iterator.next()
+            val bit = iterator.next()
             if (remainder.bits.isNotEmpty or bit === True) {
                 remainder.bits.prepend(bit)
             }
 
             // shift left quotient by one bit
-            bit = remainder greaterThanOrEqualTo divisor
-            quotient.prepend(bit)
-            if (bit === True) {
+            quotient.prepend(remainder greaterThanOrEqualTo divisor)
+            if (quotient.first === True) {
                 remainder -= divisor
             }
         }
@@ -235,7 +234,7 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return if (this.compareTo(other) === ComparisonResult.LESS) False else True
     }
 
-    private fun compareTo(other: UInt): ComparisonResult {
+    fun compareTo(other: UInt): ComparisonResult {
         // Small numbers are handled separately, as they cause problems
         if (bits.isEmpty and other.bits.isNotEmpty === True) {
             return ComparisonResult.LESS
@@ -270,10 +269,6 @@ class UInt private constructor(private var bits: List<Boolean>) {
             }
         }
         return ComparisonResult.EQUAL
-    }
-
-    private enum class ComparisonResult {
-        LESS, EQUAL, GREATER
     }
 
     fun isPositive(): Boolean {

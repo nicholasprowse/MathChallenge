@@ -1,16 +1,20 @@
 val True = Boolean.True
 val False = Boolean.False
 
-val D0 = UInt.ZERO
-val D1 = UInt.ONE
-val D2 = UInt.TWO
-val D3 = UInt.THREE
-val D4 = UInt.FOUR
-val D5 = UInt.FIVE
-val D6 = UInt.SIX
-val D7 = UInt.SEVEN
-val D8 = UInt.EIGHT
-val D9 = UInt.NINE
+val D0 = Int.ZERO
+val D1 = Int.ONE
+val D2 = Int.TWO
+val D3 = Int.THREE
+val D4 = Int.FOUR
+val D5 = Int.FIVE
+val D6 = Int.SIX
+val D7 = Int.SEVEN
+val D8 = Int.EIGHT
+val D9 = Int.NINE
+
+enum class ComparisonResult {
+    LESS, EQUAL, GREATER
+}
 
 val Any?.isNull: Boolean get() {
     if(this === null) {
@@ -35,8 +39,8 @@ fun Any?.identicalTo(obj: Any?): Boolean {
 
 fun factorial(n: UInt): UInt {
     var i = n
-    var result = D1
-    while (i greaterThan D0 === True) {
+    var result = UInt.ONE
+    while (i.isPositive() === True) {
         result *= i
         i--
     }

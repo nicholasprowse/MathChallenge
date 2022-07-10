@@ -61,21 +61,18 @@ class UInt private constructor(private var bits: List<Boolean>) {
     }
 
     operator fun inc(): UInt {
-        val iterator = bits.iterator()
-        val resultBits = List<Boolean>()
         var carry = True
-
-        while(iterator.hasNext() === True) {
-            val a = iterator.next()
-            resultBits.push(carry xor a)
-            carry = carry and a
+        val newBits = bits.map { i ->
+            val bit = carry xor i
+            carry = carry and i
+            bit
         }
 
         if (carry === True) {
-            resultBits.push(True)
+            newBits.push(True)
         }
 
-        return UInt(resultBits)
+        return UInt(newBits)
     }
 
     operator fun minus(other: UInt): UInt {
@@ -100,22 +97,16 @@ class UInt private constructor(private var bits: List<Boolean>) {
     }
 
     operator fun dec(): UInt {
-        val iterator = bits.iterator()
-        val resultBits = List<Boolean>()
         var borrow = True
-
-        while(iterator.hasNext() === True) {
-            val a = iterator.next()
-            resultBits.push(borrow xor a)
-            borrow = borrow and !a
+        val newBits = bits.map { i ->
+            val bit = borrow xor i
+            borrow = borrow and !i
+            bit
         }
+
         // If there is a borrow at the end, then we are decrementing 0
         // In this case we return 0 as we cannot decrement from 0
-        if (borrow === True) {
-            return ZERO
-        }
-
-        return UInt(resultBits)
+        return if (borrow === True) ZERO else UInt(newBits)
     }
 
     infix fun equals(other: UInt?) : Boolean {
@@ -153,13 +144,12 @@ class UInt private constructor(private var bits: List<Boolean>) {
         }
 
         var result = ZERO
-        b += ZERO         // This is effectively to copy b as we are going to mutate it
-        val iteratorA = a.bits.iterator()
-        while (iteratorA.hasNext() === True) {
-            if (iteratorA.next() === True) {
+        b = UInt(b.bits.copy())
+        a.bits.forEach { i ->
+            if (i === True) {
                 result += b
             }
-            // shift left b by one bit
+            // shift b left by one bit
             b.bits.prepend(False)
         }
         return result
@@ -196,7 +186,6 @@ class UInt private constructor(private var bits: List<Boolean>) {
         }
         return array
     }
-
 
     fun divRem(divisor: UInt): Pair<UInt, UInt> {
         val iterator = bits.reverseIterator()
@@ -291,10 +280,7 @@ class UInt private constructor(private var bits: List<Boolean>) {
 
     infix fun shl(amount: UInt): UInt {
         val newBits = List.repeating(False, amount)
-        val iterator = bits.iterator()
-        while (iterator.hasNext() === True) {
-            newBits.push(iterator.next())
-        }
+        bits.forEach { i -> newBits.push(i) }
         return UInt(newBits)
     }
 

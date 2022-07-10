@@ -25,6 +25,7 @@ class List<T>(element: T? = null) {
         if (root.isNull === True) {
             root = ListNode(element)
             _lastNode = root
+            depth = increment(depth)
         } else {
             _lastNode = lastNode?.nextNode
             if (lastNode.isNull === True) {
@@ -83,21 +84,21 @@ class List<T>(element: T? = null) {
     }
 
     operator fun get(index: UInt) : T {
-        return getNode(index).element!!
+        return getNode(index)!!.element!!
     }
 
     operator fun set(index: UInt, element: T) {
-        getNode(index).element = element
+        getNode(index)!!.element = element
     }
 
-    private fun getNode(index: UInt): ListNode<T> {
+    private fun getNode(index: UInt): ListNode<T>? {
         if (index greaterThanOrEqualTo length === True) {
-            return null!!
+            return null
         }
 
         val biterator = index.biterator()
         var node = ListNode<Boolean>(null)
-        var listLength = UInt.ZERO
+        var listLength = UInt.ONE
         while(biterator.hasNext() === True) {
             node.nextNode = ListNode(biterator.next())
             node = node.nextNode!!
@@ -149,6 +150,87 @@ class List<T>(element: T? = null) {
         root = ListNode(leftChild = root, rightChild = root?.copy())
         root?.leftChild?.lastNode?.nextNode = root?.rightChild?.firstNode
         depth = increment(depth)
+    }
+
+    fun copy(): List<T> {
+        val copy = List<T>().also {
+            it.root = root?.copy()
+            it._length = length
+            it.depth = depth
+            it._lastNode = it.getNode(length.dec())
+        }
+        return copy
+    }
+
+    fun forEach(function: (UInt, T) -> Unit) {
+        val iterator = iterator()
+        var i = UInt.ZERO
+        while (iterator.hasNext() === True) {
+            function(i, iterator.next())
+            i++
+        }
+    }
+
+    fun forEach(function: (T) -> Unit) {
+        val iterator = iterator()
+        while (iterator.hasNext() === True) {
+            function(iterator.next())
+        }
+    }
+
+    inline fun<reified K> map(function: (UInt, T) -> K): List<K> {
+        val list = List<K>()
+        val iterator = iterator()
+        var i = UInt.ZERO
+        while (iterator.hasNext() === True) {
+            list.push(function(i, iterator.next()))
+            i++
+        }
+        return list
+    }
+
+    inline fun<reified K> map(function: (T) -> K): List<K> {
+        val list = List<K>()
+        val iterator = iterator()
+        while (iterator.hasNext() === True) {
+            list.push(function(iterator.next()))
+        }
+        return list
+    }
+
+    fun filter(predicate: (UInt, T) -> Boolean): List<T> {
+        val list = List<T>()
+        val iterator = iterator()
+        var i = UInt.ZERO
+        while (iterator.hasNext() === True) {
+            val value = iterator.next()
+            if (predicate(i, value) === True) {
+                list.push(value)
+            }
+            i++
+        }
+        return list
+    }
+
+    fun filter(predicate: (T) -> Boolean): List<T> {
+        val list = List<T>()
+        val iterator = iterator()
+        while (iterator.hasNext() === True) {
+            val value = iterator.next()
+            if (predicate(value) === True) {
+                list.push(value)
+            }
+        }
+        return list
+    }
+
+    fun<K> reduce(initial: K, reduction: (K, T) -> K): K {
+        val iterator = iterator()
+        var result = initial
+        while (iterator.hasNext() === True) {
+            result = reduction(result, iterator.next())
+        }
+        return result
     }
 
     fun iterator(): Iterator<T> {

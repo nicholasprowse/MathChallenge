@@ -1,4 +1,4 @@
-class UInt private constructor(private var bits: List<Boolean>) {
+class UInt private constructor(private var bits: List<Boolean>): Number() {
 
     companion object {
         val  ZERO: UInt = UInt(List())
@@ -27,6 +27,15 @@ class UInt private constructor(private var bits: List<Boolean>) {
             NINE = EIGHT + ONE
             TEN = NINE + ONE
         }
+
+        private fun valueOf(n: Number): List<Boolean> {
+            return when(n) {
+                is UInt -> n.bits
+                is Int -> n.toUInt().bits
+                is Float -> n.toInt().toUInt().bits
+                else -> List()
+            }
+        }
     }
 
     init {
@@ -40,13 +49,24 @@ class UInt private constructor(private var bits: List<Boolean>) {
         }
     }
 
-    operator fun plus(other: UInt) : UInt {
+    constructor(n: Number): this(valueOf(n))
+
+    override operator fun invoke(n: Number) : UInt {
+        return this * TEN + n
+    }
+
+    override operator fun unaryMinus() : UInt {
+        return ZERO
+    }
+
+    override operator fun plus(n: Number) : UInt {
+        val other = UInt(n)
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
         val resultBits = List<Boolean>()
         var carry = False
 
-        while(iteratorA.hasNext() or iteratorB.hasNext() === True) {
+        while (iteratorA.hasNext() or iteratorB.hasNext() === True) {
             val a = if (iteratorA.hasNext() === True) iteratorA.next() else False
             val b = if (iteratorB.hasNext() === True) iteratorB.next() else False
             resultBits.push(carry xor (a xor b))
@@ -60,7 +80,7 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return UInt(resultBits)
     }
 
-    operator fun inc(): UInt {
+    override operator fun inc(): UInt {
         var carry = True
         val newBits = bits.map { i ->
             val bit = carry xor i
@@ -75,7 +95,8 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return UInt(newBits)
     }
 
-    operator fun minus(other: UInt): UInt {
+    override operator fun minus(n: Number): UInt {
+        val other = UInt(n)
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
         val resultBits = List<Boolean>()
@@ -96,7 +117,7 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return UInt(resultBits)
     }
 
-    operator fun dec(): UInt {
+    override operator fun dec(): UInt {
         var borrow = True
         val newBits = bits.map { i ->
             val bit = borrow xor i
@@ -109,10 +130,12 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return if (borrow === True) ZERO else UInt(newBits)
     }
 
-    infix fun equals(other: UInt?) : Boolean {
-        if (other === null) {
+    override infix fun equals(n: Number?) : Boolean {
+        if (n === null) {
             return False
         }
+
+        val other = UInt(n)
         val iteratorA = bits.iterator()
         val iteratorB = other.bits.iterator()
         while (iteratorA.hasNext() and iteratorB.hasNext() === True) {
@@ -125,16 +148,13 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return !(iteratorA.hasNext() or iteratorB.hasNext())
     }
 
-    infix fun notEquals(other: UInt?) : Boolean {
-        return !equals(other)
-    }
-
     // This is needed to suppress a warning about the above method.
     // It is not used as it violates the rules of the challenge
     override fun equals(other: Any?): kotlin.Boolean { throw Exception() }
     override fun hashCode(): kotlin.Int { throw Exception() }
 
-    operator fun times(other: UInt) : UInt {
+    override operator fun times(n: Number) : UInt {
+        val other = UInt(n)
         var a = this
         var b = other
         // We require order of A to be less than order of B
@@ -155,36 +175,12 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return result
     }
 
-    operator fun div(divisor: UInt): UInt {
-        return divRem(divisor).first
+    override operator fun div(n: Number): UInt {
+        return divRem(UInt(n)).first
     }
 
-    operator fun rem(divisor: UInt): UInt {
-        return divRem(divisor).second
-    }
-
-    operator fun invoke(other: UInt) : UInt {
-        return this * TEN + other
-    }
-
-    operator fun rangeTo(other: UInt) : List<UInt> {
-        var i = this
-        val array = List<UInt>()
-        while (i lessThanOrEqualTo other === True) {
-            array.push(i)
-            i++
-        }
-        return array
-    }
-
-    infix fun until(other: UInt) : List<UInt> {
-        var i = this
-        val array = List<UInt>()
-        while (i lessThan other === True) {
-            array.push(i)
-            i++
-        }
-        return array
+    override operator fun rem(n: Number): UInt {
+        return divRem(UInt(n)).second
     }
 
     fun divRem(divisor: UInt): Pair<UInt, UInt> {
@@ -207,23 +203,8 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return Pair(UInt(quotient), remainder)
     }
 
-    infix fun lessThan(other: UInt): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.LESS) True else False
-    }
-
-    infix fun greaterThan(other: UInt): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.GREATER) True else False
-    }
-
-    infix fun lessThanOrEqualTo(other: UInt): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.GREATER) False else True
-    }
-
-    infix fun greaterThanOrEqualTo(other: UInt): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.LESS) False else True
-    }
-
-    fun compareTo(other: UInt): ComparisonResult {
+    override fun compareTo(n: Number): ComparisonResult {
+        val other = UInt(n)
         // Small numbers are handled separately, as they cause problems
         if (bits.isEmpty and other.bits.isNotEmpty === True) {
             return ComparisonResult.LESS
@@ -264,7 +245,8 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return bits.isNotEmpty
     }
     
-    infix fun shr(amount: UInt): UInt {
+    override infix fun shr(n: Number): UInt {
+        val amount = UInt(n)
         val iterator = bits.iterator()
         var x = amount
         while (iterator.hasNext() and x.isPositive() === True) {
@@ -278,7 +260,8 @@ class UInt private constructor(private var bits: List<Boolean>) {
         return UInt(newBits)
     }
 
-    infix fun shl(amount: UInt): UInt {
+    override infix fun shl(n: Number): UInt {
+        val amount = UInt(n)
         val newBits = List.repeating(False, amount)
         bits.forEach { i -> newBits.push(i) }
         return UInt(newBits)

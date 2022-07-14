@@ -1,4 +1,4 @@
-class Int private constructor(private val value: UInt, private val positive: Boolean) {
+class Int private constructor(private val value: UInt, private val positive: Boolean): Number() {
     companion object {
         val  ZERO = Int(UInt.ZERO )
         val   ONE = Int(UInt.ONE  )
@@ -11,19 +11,37 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         val EIGHT = Int(UInt.EIGHT)
         val  NINE = Int(UInt.NINE )
         val   TEN = Int(UInt.TEN  )
+
+        private fun valueOf(n: Number): Pair<UInt, Boolean> {
+            return when (n) {
+                is UInt -> Pair(n, True)
+                is Int -> Pair(n.value, n.positive)
+                is Float -> {
+                    val intVal = n.toInt()
+                    Pair(intVal.value, intVal.positive)
+                }
+                else -> Pair(UInt.ZERO, True)
+            }
+        }
     }
 
-    constructor(value: UInt): this(value, True)
+    constructor(args: Pair<UInt, Boolean>): this(args.first, args.second)
+    constructor(n: Number): this(valueOf(n))
 
-    operator fun invoke(other: Int) : Int {
-        return this * TEN + other
+    override operator fun invoke(n: Number) : Int {
+        return this * TEN + n
     }
 
-    operator fun unaryMinus(): Int {
+    fun toUInt(): UInt {
+        return if (!positive === True) UInt.ZERO else value
+    }
+
+    override operator fun unaryMinus(): Int {
         return Int(value, !positive)
     }
 
-    operator fun plus(other: Int): Int {
+    override operator fun plus(n: Number): Int {
+        val other = Int(n)
         return if (positive === True) {
             if (other.positive === True) {
                 Int(this.value + other.value)
@@ -43,11 +61,11 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         }
     }
 
-    operator fun minus(other: Int): Int {
-        return this + -other
+    override operator fun minus(n: Number): Int {
+        return this + -Int(n)
     }
 
-    operator fun inc(): Int {
+    override operator fun inc(): Int {
         return if (value.isPositive() === True) {
             if (positive === True) Int(value.inc()) else Int(value.dec(), False)
         } else {
@@ -55,7 +73,7 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         }
     }
 
-    operator fun dec(): Int {
+    override operator fun dec(): Int {
         return if (value.isPositive() === True) {
             if (positive === True) Int(value.dec()) else Int(value.inc(), False)
         } else {
@@ -63,16 +81,17 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         }
     }
 
-    operator fun times(other: Int): Int {
+    override operator fun times(n: Number): Int {
+        val other = Int(n)
         return Int(value * other.value, positive.identicalTo(other.positive))
     }
 
-    operator fun div(divisor: Int): Int {
-        return divRem(divisor).first
+    override operator fun div(n: Number): Int {
+        return divRem(Int(n)).first
     }
 
-    operator fun rem(divisor: Int): Int {
-        return divRem(divisor).second
+    override operator fun rem(n: Number): Int {
+        return divRem(Int(n)).second
     }
 
     fun divRem(divisor: Int): Pair<Int, Int> {
@@ -84,11 +103,12 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return Pair(quotient, remainder)
     }
 
-    infix fun equals(other: Int?): Boolean {
-        if (other === null) {
+    override infix fun equals(n: Number?): Boolean {
+        if (n === null) {
             return False
         }
 
+        val other = Int(n)
         if (!value.isPositive() and !other.value.isPositive() === True) {
             return True
         }
@@ -96,32 +116,13 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return value equals other.value and positive.identicalTo(other.positive)
     }
 
-    infix fun notEquals(other: Int?) : Boolean {
-        return !equals(other)
-    }
-
     // This is needed to suppress a warning about the above method.
     // It is not used as it violates the rules of the challenge
     override fun equals(other: Any?): kotlin.Boolean { throw Exception() }
     override fun hashCode(): kotlin.Int { throw Exception() }
 
-    infix fun lessThan(other: Int): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.LESS) True else False
-    }
-
-    infix fun greaterThan(other: Int): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.GREATER) True else False
-    }
-
-    infix fun lessThanOrEqualTo(other: Int): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.GREATER) False else True
-    }
-
-    infix fun greaterThanOrEqualTo(other: Int): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.LESS) False else True
-    }
-
-    private fun compareTo(other: Int): ComparisonResult {
+    override fun compareTo(n: Number): ComparisonResult {
+        val other = Int(n)
         // Handle zero separately, as it can have either sign
         if (!value.isPositive() and !other.value.isPositive() === True) {
             return ComparisonResult.EQUAL
@@ -141,31 +142,13 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         }
     }
 
-    operator fun rangeTo(other: Int): List<Int> {
-        var i = this
-        val array = List<Int>()
-        while (i lessThanOrEqualTo other === True) {
-            array.push(i)
-            i++
-        }
-        return array
-    }
-
-    infix fun until(other: Int) : List<Int> {
-        var i = this
-        val array = List<Int>()
-        while (i lessThan other === True) {
-            array.push(i)
-            i++
-        }
-        return array
-    }
-
-    infix fun shr(amount: Int): Int {
+    override infix fun shr(n: Number): Int {
+        val amount = Int(n)
         return Int(if (amount.positive === True) value shr amount.value else value shl amount.value, positive)
     }
 
-    infix fun shl(amount: Int): Int {
+    override infix fun shl(n: Number): Int {
+        val amount = Int(n)
         return Int(if (amount.positive === True) value shl amount.value else value shr amount.value, positive)
     }
 

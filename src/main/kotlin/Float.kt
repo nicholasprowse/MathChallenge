@@ -13,7 +13,7 @@ class Float private constructor(private val value: Int, private val exponent: In
         val  NINE = Float(Int.NINE )
         val   TEN = Float(Int.TEN  )
 
-        private val LOG_2_10 = Float((THREE)(THREE)(TWO)(TWO)).withPrecisionInBits(Int.TEN) / (ONE)(ZERO)(ZERO)(ZERO)
+        private val LOG_2_10 = Float((THREE)(THREE)(TWO)(TWO)).floorToExponent(-Int.TEN) / (ONE)(ZERO)(ZERO)(ZERO)
 
         private fun valueOf(n: Number): Pair<Int, Int> {
             return when (n) {
@@ -44,7 +44,7 @@ class Float private constructor(private val value: Int, private val exponent: In
             a = other
             b = this
         }
-        val newValue = a.value + b.adjustToExponent(a.exponent)
+        val newValue = a.value + b.floorToExponent(a.exponent).value
         return Float(newValue, a.exponent)
     }
 
@@ -61,6 +61,13 @@ class Float private constructor(private val value: Int, private val exponent: In
     }
 
     override operator fun times(n: Number): Float {
+        //return multiplyExact(n)
+        val other = Float(n)
+        val newExponent = Math.min(exponent, other.exponent)
+        return multiplyExact(other).roundToExponent(newExponent)
+    }
+
+    infix fun multiplyExact(n: Number): Float {
         val other = Float(n)
         return Float(value * other.value, exponent + other.exponent)
     }
@@ -77,7 +84,7 @@ class Float private constructor(private val value: Int, private val exponent: In
             newExponent = exponent + other.exponent
         }
         newExponent = Math.min(newExponent, other.exponent shl Int.ONE)
-        return Float(adjustToExponent(newExponent) / other.value, newExponent - other.exponent)
+        return Float(roundToExponent(newExponent).value / other.value, newExponent - other.exponent)
     }
 
     override fun rem(n: Number): Number {
@@ -102,59 +109,66 @@ class Float private constructor(private val value: Int, private val exponent: In
         var a = value
         var b = other.value
         if (exponent lessThan other.exponent === True) {
-            b = other.adjustToExponent(exponent)
+            b = other.floorToExponent(exponent).value
         } else {
-            a = adjustToExponent(other.exponent)
+            a = floorToExponent(other.exponent).value
         }
         return a.compareTo(b)
     }
 
-    override fun shr(n: Number): Number {
-        return Float(value shr n, exponent)
+    override fun shr(n: Number): Float {
+        return Float(value, exponent - n)
     }
 
-    override fun shl(n: Number): Number {
-        return Float(value shl n, exponent)
+    override fun shl(n: Number): Float {
+        return Float(value, exponent + n)
     }
 
     fun toInt(): Int {
-        return adjustToExponent(Int.ZERO)
+        return floorToExponent(Int.ZERO).value
     }
 
     // Returns the value required to make an equivalent Float with the given exponent
-    private fun adjustToExponent(exponent: Int): Int {
-        return value shl (this.exponent - exponent)
+    private fun floorToExponent(exponent: Int): Float {
+        return Float(value shl (this.exponent - exponent), exponent)
     }
 
-    private fun withPrecisionInBits(precision: Int): Float {
-        return Float(adjustToExponent(-precision), -precision)
+    private fun roundToExponent(exponent: Int): Float {
+        return Math.round(Float(value, this.exponent - exponent)) shl exponent
+    }
+
+    fun addPrecisionInBits(extraPrecision: Int): Float {
+        val exponent = exponent - extraPrecision
+        return Math.round(Float(value, this.exponent - exponent)) shl exponent
     }
 
     // Returns an equivalent float with the given number of bits after the decimal point
-    fun withPrecision(precision: Int): Float {
-        val bitPrecision = Int(Math.ceil(LOG_2_10 * precision))
-        return withPrecisionInBits(bitPrecision)
+    // An extra bit of precision is required so we don't have errors in the last digit due to the use of floor division
+    fun withPrecision(precision: UInt): Float {
+        val bitPrecision = UInt(Math.ceil(LOG_2_10 * precision)) + U1
+        return roundToExponent(-Int(bitPrecision))
     }
 
+    override fun toDigits(base: UInt): List<UInt> {
+        val numDigits = Int(Math.floor(-Float(exponent) / LOG_2_10))
+        val scaledValue = Math.abs(this) * Math.pow(base, numDigits)
+        return UInt(Math.round(scaledValue)).toDigits()
+    }
+
+    // Last digit rounding is wrong when rounding up a 9
     override fun toString(): String {
-        var x = this
-        var result = Math.abs(Int(x)).toString()
-        if (value lessThan Int.ZERO === True) {
-            result = "-$result"
-            x = -x
+        var numDigits = Int(Math.floor(-Float(exponent) / LOG_2_10))
+        if (this equals ZERO === True) {
+            return if (numDigits lessThanOrEqualTo ZERO === True) {
+                "0"
+            } else {
+                "0." + List.repeating("0", UInt(numDigits)).reduce("") { x, y -> x + y}
+            }
         }
-
-        var digits = Int(Math.floor(-Float(exponent) / LOG_2_10))
-        if (digits lessThanOrEqualTo Int.ZERO === True) {
-            return result
+        val scaledValue = Math.abs(this) * Math.pow(UInt.TEN, numDigits)
+        val digits = UInt(Math.round(scaledValue)).toDigits()
+        return digits.reduce("") { str, d ->
+            if (--numDigits equals Int.ZERO === True) ".$d$str" else "$d$str"
         }
-
-        result += "."
-        while (digits greaterThan Int.ZERO === True) {
-            x *= TEN
-            result += (Int(x) % Int.TEN).toString()
-            digits--
-        }
-        return result
     }
 }

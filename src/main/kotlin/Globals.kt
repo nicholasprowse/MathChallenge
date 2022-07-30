@@ -59,13 +59,3 @@ fun Any?.identicalTo(obj: Any?): Boolean {
     return False
 }
 
-fun factorial(n: UInt): UInt {
-    var i = n
-    var result = UInt.ONE
-    while (i.isPositive() === True) {
-        result *= i
-        i--
-    }
-    return result
-}
-

@@ -12,6 +12,8 @@ abstract class Number {
     abstract infix fun shl(n: Number): Number
     abstract operator fun invoke(n: Number) : Number
     abstract fun compareTo(n: Number): ComparisonResult
+    // Returns a list of digits in the given base, where element zero is the least significant digit
+    abstract fun toDigits(base: UInt=UInt.TEN): List<UInt>
 
     infix fun notEquals(n: Number?) : Boolean {
         return !equals(n)

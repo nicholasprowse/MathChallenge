@@ -50,6 +50,7 @@ class UInt private constructor(private var bits: List<Boolean>): Number() {
     }
 
     constructor(n: Number): this(valueOf(n))
+    val numBits get() = bits.length
 
     override operator fun invoke(n: Number) : UInt {
         return this * TEN + n
@@ -267,6 +268,18 @@ class UInt private constructor(private var bits: List<Boolean>): Number() {
         return UInt(newBits)
     }
 
+    infix fun and(n: Number): UInt {
+        val iteratorA = bits.iterator()
+        val iteratorB = UInt(n).bits.iterator()
+        val resultBits = List<Boolean>()
+
+        while (iteratorA.hasNext() and iteratorB.hasNext() === True) {
+            resultBits.push(iteratorA.next() and iteratorB.next())
+        }
+
+        return UInt(resultBits)
+    }
+
     // biterator -> bits iterator
     fun biterator(): List.Iterator<Boolean> {
         return bits.iterator()
@@ -276,28 +289,35 @@ class UInt private constructor(private var bits: List<Boolean>): Number() {
         return bits.reverseIterator()
     }
 
-    override fun toString(): String {
+    override fun toDigits(base: UInt): List<UInt> {
+        val digits = List<UInt>()
         if (bits.isEmpty === True) {
-            return "0"
+            return digits
         }
 
-        var result = ""
         var value = this
         while (value.isPositive() === True) {
-            val (v, r) = value.divRem(TEN)
+            val (v, r) = value.divRem(base)
             value = v
-            val digit = if (r equals ZERO  === True) '0'
-                   else if (r equals ONE   === True) '1'
-                   else if (r equals TWO   === True) '2'
-                   else if (r equals THREE === True) '3'
-                   else if (r equals FOUR  === True) '4'
-                   else if (r equals FIVE  === True) '5'
-                   else if (r equals SIX   === True) '6'
-                   else if (r equals SEVEN === True) '7'
-                   else if (r equals EIGHT === True) '8'
-                   else '9'
-            result = digit + result
+            digits.push(r)
         }
-        return result
+        return digits
+    }
+
+    override fun toString(): String {
+        return if (this lessThan TEN === True) {
+                 if (this equals ZERO  === True) "0"
+            else if (this equals ONE   === True) "1"
+            else if (this equals TWO   === True) "2"
+            else if (this equals THREE === True) "3"
+            else if (this equals FOUR  === True) "4"
+            else if (this equals FIVE  === True) "5"
+            else if (this equals SIX   === True) "6"
+            else if (this equals SEVEN === True) "7"
+            else if (this equals EIGHT === True) "8"
+            else "9"
+        } else {
+            toDigits().reduce("") { str, d -> d.toString() + str }
+        }
     }
 }

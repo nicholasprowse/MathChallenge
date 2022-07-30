@@ -15,6 +15,11 @@ class ListNode<T>(
             field = node
         }
 
+    init {
+        this.rightChild = rightChild
+        this.leftChild = leftChild
+    }
+
     private var _nextNode: ListNode<T>? = null
     var nextNode: ListNode<T>? get() = _nextNode
         set(node) {
@@ -29,14 +34,6 @@ class ListNode<T>(
             _previousNode = node
         }
 
-//    val hasParent get() = parent != null
-//    val isLeaf get() = leftChild.isNull and rightChild.isNull
-
-    init {
-        this.rightChild = rightChild
-        this.leftChild = leftChild
-    }
-
     fun copy() : ListNode<T> {
         val newNode = ListNode(element)
         newNode.leftChild = leftChild?.copy()
@@ -48,20 +45,10 @@ class ListNode<T>(
     /*
     The left most descendant of this node
      */
-    val firstNode: ListNode<T> get() {
-        var node = this
-        while (true) {
-            node = node.leftChild ?: return node
-        }
-    }
+    val firstNode: ListNode<T> get() = leftChild?.firstNode ?: this
 
     /*
     The right most descendant of this node
      */
-    val lastNode: ListNode<T> get() {
-        var node = this
-        while (true) {
-            node = node.rightChild ?: return node
-        }
-    }
+    val lastNode: ListNode<T> get() = rightChild?.firstNode ?: this
 }

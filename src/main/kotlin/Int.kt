@@ -161,6 +161,10 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return value.reverseBiterator()
     }
 
+    override fun toDigits(base: UInt): List<UInt> {
+        return value.toDigits(base)
+    }
+
     override fun toString(): String {
         return if (value.isPositive() === True) {
             if (positive === True) value.toString() else "-$value"

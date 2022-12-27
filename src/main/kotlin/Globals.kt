@@ -38,24 +38,7 @@ enum class ComparisonResult {
     LESS, EQUAL, GREATER
 }
 
-val Any?.isNull: Boolean get() {
-    if(this === null) {
-        return True
-    }
-    return False
-}
-
-val Any?.isNotNull: Boolean get() {
-    if (this === null) {
-        return False
-    }
-    return True
-}
-
-fun Any?.identicalTo(obj: Any?): Boolean {
-    if (this === obj) {
-        return True
-    }
-    return False
-}
+val Any?.isNull: Boolean get() = if(this === null) True else False
+val Any?.isNotNull: Boolean get() = if (this === null) False else True
+fun Any?.identicalTo(obj: Any?) = if (this === obj) True else False
 

@@ -1,8 +1,5 @@
 fun main() {
-    U1
-    val x = (F1)(F4)(F3).withPrecision(U3) / F8
-    println(x)
-    println(Math.exp(x))
+    println(Digit.D9 + Digit.D8)
 
 //    val p = (U1)(I0)
 //    val pi = Math.pi(p)

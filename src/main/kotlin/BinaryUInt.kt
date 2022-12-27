@@ -1,4 +1,4 @@
-class BinaryUInt private constructor(private var bits: List<Boolean>): Number() {
+class BinaryUInt private constructor(var bits: List<Boolean>): Number() {
 
     companion object {
         val D0: BinaryUInt = BinaryUInt(List())
@@ -52,13 +52,8 @@ class BinaryUInt private constructor(private var bits: List<Boolean>): Number() 
     constructor(n: Number): this(valueOf(n))
     val numBits get() = bits.length
 
-    override operator fun invoke(n: Number) : BinaryUInt {
-        return this * TEN + n
-    }
-
-    override operator fun unaryMinus() : BinaryUInt {
-        return D0
-    }
+    override operator fun invoke(n: Number) = this * TEN + n
+    override operator fun unaryMinus() = D0
 
     override operator fun plus(n: Number) : BinaryUInt {
         val other = BinaryUInt(n)
@@ -176,13 +171,8 @@ class BinaryUInt private constructor(private var bits: List<Boolean>): Number() 
         return result
     }
 
-    override operator fun div(n: Number): BinaryUInt {
-        return divRem(BinaryUInt(n)).first
-    }
-
-    override operator fun rem(n: Number): BinaryUInt {
-        return divRem(BinaryUInt(n)).second
-    }
+    override operator fun div(n: Number) = divRem(BinaryUInt(n)).first
+    override operator fun rem(n: Number) = divRem(BinaryUInt(n)).second
 
     fun divRem(divisor: BinaryUInt): Pair<BinaryUInt, BinaryUInt> {
         val iterator = bits.reverseIterator()
@@ -242,9 +232,7 @@ class BinaryUInt private constructor(private var bits: List<Boolean>): Number() 
         return ComparisonResult.EQUAL
     }
 
-    fun isPositive(): Boolean {
-        return bits.isNotEmpty
-    }
+    fun isPositive() = bits.isNotEmpty
     
     override infix fun shr(n: Number): BinaryUInt {
         val amount = BinaryUInt(n)

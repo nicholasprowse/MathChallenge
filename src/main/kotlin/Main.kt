@@ -1,5 +1,8 @@
 fun main() {
-    println((U2)(U7)(U4) + (U1)(U9)(U2)(U7))
+    var x = (U9)(U5)
+    while (x greaterThan U0 === True) {
+        println(x--)
+    }
 
 //    val p = (U1)(I0)
 //    val pi = Math.pi(p)

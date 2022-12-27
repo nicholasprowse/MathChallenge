@@ -89,6 +89,125 @@ class Digit {
         }
     }
 
+    /**
+     * Returns a pair containing a boolean indicating borrow, and a digit indicating the difference
+     */
+    operator fun minus(n: Digit): Pair<Boolean, Digit> {
+        if (this === n) return Pair(False, D0)
+        return when(this) {
+            D0 -> when(n) {
+                D1   -> Pair(True, D9)
+                D2   -> Pair(True, D8)
+                D3   -> Pair(True, D7)
+                D4   -> Pair(True, D6)
+                D5   -> Pair(True, D5)
+                D6   -> Pair(True, D4)
+                D7   -> Pair(True, D3)
+                D8   -> Pair(True, D2)
+                else -> Pair(True, D1)
+            }
+            D1 -> when(n) {
+                D0   -> Pair(False, D1)
+                D2   -> Pair(True,  D9)
+                D3   -> Pair(True,  D8)
+                D4   -> Pair(True,  D7)
+                D5   -> Pair(True,  D6)
+                D6   -> Pair(True,  D5)
+                D7   -> Pair(True,  D4)
+                D8   -> Pair(True,  D3)
+                else -> Pair(True,  D2)
+            }
+            D2 -> when(n) {
+                D0   -> Pair(False, D2)
+                D1   -> Pair(False, D1)
+                D3   -> Pair(True,  D9)
+                D4   -> Pair(True,  D8)
+                D5   -> Pair(True,  D7)
+                D6   -> Pair(True,  D6)
+                D7   -> Pair(True,  D5)
+                D8   -> Pair(True,  D4)
+                else -> Pair(True,  D3)
+            }
+            D3 -> when(n) {
+                D0   -> Pair(False, D3)
+                D1   -> Pair(False, D2)
+                D2   -> Pair(False, D1)
+                D4   -> Pair(True,  D9)
+                D5   -> Pair(True,  D8)
+                D6   -> Pair(True,  D7)
+                D7   -> Pair(True,  D6)
+                D8   -> Pair(True,  D5)
+                else -> Pair(True,  D4)
+            }
+            D4 -> when(n) {
+                D0   -> Pair(False, D4)
+                D1   -> Pair(False, D3)
+                D2   -> Pair(False, D2)
+                D3   -> Pair(False, D1)
+                D5   -> Pair(True,  D9)
+                D6   -> Pair(True,  D8)
+                D7   -> Pair(True,  D7)
+                D8   -> Pair(True,  D6)
+                else -> Pair(True,  D5)
+            }
+            D5 -> when(n) {
+                D0   -> Pair(False, D5)
+                D1   -> Pair(False, D4)
+                D2   -> Pair(False, D3)
+                D3   -> Pair(False, D2)
+                D4   -> Pair(False, D1)
+                D6   -> Pair(True,  D9)
+                D7   -> Pair(True,  D8)
+                D8   -> Pair(True,  D7)
+                else -> Pair(True,  D6)
+            }
+            D6 -> when(n) {
+                D0   -> Pair(False, D6)
+                D1   -> Pair(False, D5)
+                D2   -> Pair(False, D4)
+                D3   -> Pair(False, D3)
+                D4   -> Pair(False, D2)
+                D5   -> Pair(False, D1)
+                D7   -> Pair(True,  D9)
+                D8   -> Pair(True,  D8)
+                else -> Pair(True,  D7)
+            }
+            D7 -> when(n) {
+                D0   -> Pair(False, D7)
+                D1   -> Pair(False, D6)
+                D2   -> Pair(False, D5)
+                D3   -> Pair(False, D4)
+                D4   -> Pair(False, D3)
+                D5   -> Pair(False, D2)
+                D6   -> Pair(False, D1)
+                D8   -> Pair(True,  D9)
+                else -> Pair(True,  D8)
+            }
+            D8 -> when(n) {
+                D0   -> Pair(False, D8)
+                D1   -> Pair(False, D7)
+                D2   -> Pair(False, D6)
+                D3   -> Pair(False, D5)
+                D4   -> Pair(False, D4)
+                D5   -> Pair(False, D3)
+                D6   -> Pair(False, D2)
+                D7   -> Pair(False, D1)
+                else -> Pair(True,  D9)
+            }
+            else -> when(n) {
+                D0   -> Pair(False, D9)
+                D1   -> Pair(False, D8)
+                D2   -> Pair(False, D7)
+                D3   -> Pair(False, D6)
+                D4   -> Pair(False, D5)
+                D5   -> Pair(False, D4)
+                D6   -> Pair(False, D3)
+                D7   -> Pair(False, D2)
+                else -> Pair(False, D1)
+            }
+        }
+    }
+
     infix fun lessThan(other: Digit): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) True else False
     }

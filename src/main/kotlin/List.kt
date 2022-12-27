@@ -14,18 +14,18 @@ class List<T>(element: T? = null) {
     private val lastNode get() = _lastNode
     val last get() = lastNode!!.element!!
 
-    private var _length: BinaryUInt = if (element.isNotNull === True) BinaryUInt.D1 else BinaryUInt.D0
-    val length: BinaryUInt get() = _length
+    private var _length: DecimalUInt = if (element.isNotNull === True) DecimalUInt.D1 else DecimalUInt.D0
+    val length: DecimalUInt get() = _length
     val isEmpty get() = root.isNull
     val isNotEmpty get() = root.isNotNull
 
-    private var depth: BinaryUInt = _length
+    private var depth: DecimalUInt = _length
 
     operator fun invoke(element: T) : List<T> {
         if (root.isNull === True) {
             root = ListNode(element)
             _lastNode = root
-            depth = increment(depth)
+            depth++
         } else {
             _lastNode = lastNode?.nextNode
             if (lastNode.isNull === True) {
@@ -35,7 +35,7 @@ class List<T>(element: T? = null) {
             }
             lastNode!!.element = element
         }
-        _length = increment(_length)
+        _length++
         return this
     }
 
@@ -49,12 +49,12 @@ class List<T>(element: T? = null) {
         } else if (lastNode === root?.leftChild?.lastNode) {
             root = root?.leftChild
             lastNode?.nextNode = null
-            depth = decrement(depth)
+            depth--
         }
-        _length = decrement(_length)
+        _length--
     }
 
-    fun insert(element: T, index: BinaryUInt): List<T> {
+    fun insert(element: T, index: DecimalUInt): List<T> {
         if (index equals length === True) {
             push(element)
             return this
@@ -83,20 +83,20 @@ class List<T>(element: T? = null) {
         return this
     }
 
-    operator fun get(index: BinaryUInt) : T {
+    operator fun get(index: DecimalUInt) : T {
         return getNode(index)!!.element!!
     }
 
-    operator fun set(index: BinaryUInt, element: T) {
+    operator fun set(index: DecimalUInt, element: T) {
         getNode(index)!!.element = element
     }
 
-    private fun getNode(index: BinaryUInt): ListNode<T>? {
+    private fun getNode(index: DecimalUInt): ListNode<T>? {
         if (index greaterThanOrEqualTo length === True) {
             return null
         }
 
-        val biterator = index.biterator()
+        val biterator = index.bits().iterator()
         var node = ListNode<Boolean>(null)
         var listLength = BinaryUInt.D1
         while(biterator.hasNext() === True) {
@@ -149,7 +149,7 @@ class List<T>(element: T? = null) {
     private fun doubleCapacity() {
         root = ListNode(leftChild = root, rightChild = root?.copy())
         root?.leftChild?.lastNode?.nextNode = root?.rightChild?.firstNode
-        depth = increment(depth)
+        depth++
     }
 
     fun copy(): List<T> {

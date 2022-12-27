@@ -11,6 +11,10 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
         val D8 = DecimalUInt(List(Digit.D8))
         val D9 = DecimalUInt(List(Digit.D9))
 
+        init {
+            D0.digits = List()
+            D1.digits = List(Digit.D1)
+        }
         private fun valueOf(n: Number): List<Digit> {
             return when(n) {
                 is DecimalUInt -> n.digits
@@ -37,9 +41,9 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
 
     override operator fun invoke(n: Number) : DecimalUInt {
         val digit = valueOf(n)
-        return if (digit.length equals BinaryUInt.D1 === True) {
+        return if (digit.length equals D1 === True) {
             DecimalUInt(digits.copy().prepend(digit.first))
-        } else if (digit.length equals BinaryUInt.D0 === True) {
+        } else if (digit.length equals D0 === True) {
             DecimalUInt(digits.copy().prepend(Digit.D0))
         } else {
             null!!
@@ -77,16 +81,46 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
         return DecimalUInt(resultDigits)
     }
 
-    override fun inc(): Number {
-        TODO("Not yet implemented")
+    override fun inc(): DecimalUInt {
+        if (this equals D0 === True) return D1
+        var carry = True
+        val newDigits = digits.map { digit ->
+            if (carry === True) {
+                val (c, d) = digit + Digit.D1
+                carry = c
+                d
+            } else {
+                digit
+            }
+        }
+
+        if (carry === True) {
+            newDigits.push(Digit.D1)
+        }
+
+        return DecimalUInt(newDigits)
     }
 
     override fun minus(n: Number): Number {
         TODO("Not yet implemented")
     }
 
-    override fun dec(): Number {
-        TODO("Not yet implemented")
+    override fun dec(): DecimalUInt {
+        if (this equals D1 === True) return D0
+        var borrow = True
+        val newDigits = digits.map { digit ->
+            if (borrow === True) {
+                val (b, d) = digit - Digit.D1
+                borrow = b
+                d
+            } else {
+                digit
+            }
+        }
+
+        // If there is a borrow at the end, then we are decrementing 0
+        // In this case we return 0 as we cannot decrement from 0
+        return if (borrow === True) D0 else DecimalUInt(newDigits)
     }
 
     override fun times(n: Number): Number {
@@ -110,7 +144,7 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
         val iteratorA = digits.iterator()
         val iteratorB = other.digits.iterator()
         while (iteratorA.hasNext() and iteratorB.hasNext() === True) {
-            if (iteratorA.next() === iteratorA.next()) continue
+            if (iteratorA.next() === iteratorB.next()) continue
             return False
         }
         return !(iteratorA.hasNext() or iteratorB.hasNext())
@@ -130,7 +164,57 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
     }
 
     override fun compareTo(n: Number): ComparisonResult {
-        TODO("Not yet implemented")
+        val other = DecimalUInt(n)
+        // Small numbers are handled separately, as they cause problems
+        if (digits.isEmpty and other.digits.isNotEmpty === True) {
+            return ComparisonResult.LESS
+        }
+        if (other.digits.isEmpty and digits.isNotEmpty === True) {
+            return ComparisonResult.GREATER
+        }
+        if (digits.length equals D1 and (other.digits.length notEquals D1) === True) {
+            return ComparisonResult.LESS
+        }
+        if (other.digits.length equals D1 and (digits.length notEquals D1) === True) {
+            return ComparisonResult.GREATER
+        }
+        return if (digits.length equals other.digits.length === True) {
+            compareWithEqualDigitSize(other)
+        } else {
+            digits.length.compareTo(other.digits.length)
+        }
+    }
+
+    private fun compareWithEqualDigitSize(other: DecimalUInt): ComparisonResult {
+        val iteratorA = digits.reverseIterator()
+        val iteratorB = other.digits.reverseIterator()
+        while (iteratorA.hasNext() === True) {
+            val comparison = iteratorA.next().compareTo(iteratorB.next())
+            if (comparison !== ComparisonResult.EQUAL)
+                return comparison
+        }
+        return ComparisonResult.EQUAL
+    }
+
+    fun bits(): List<Boolean> {
+        var binary = BinaryUInt.D0
+        val digitIterator = digits.iterator()
+        while (digitIterator.hasNext() === True) {
+            val binaryDigit = when (digitIterator.next()) {
+                Digit.D0 -> BinaryUInt.D0
+                Digit.D1 -> BinaryUInt.D1
+                Digit.D2 -> BinaryUInt.D2
+                Digit.D3 -> BinaryUInt.D3
+                Digit.D4 -> BinaryUInt.D4
+                Digit.D5 -> BinaryUInt.D5
+                Digit.D6 -> BinaryUInt.D6
+                Digit.D7 -> BinaryUInt.D7
+                Digit.D8 -> BinaryUInt.D8
+                else -> BinaryUInt.D9
+            }
+            binary = binary.shl(BinaryUInt.D3) + binary.shl(BinaryUInt.D1) + binaryDigit
+        }
+        return binary.bits
     }
 
     override fun toDigits(base: Int): List<Digit> = digits

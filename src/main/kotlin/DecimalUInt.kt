@@ -11,6 +11,17 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
         val D8 = DecimalUInt(List(Digit.D8))
         val D9 = DecimalUInt(List(Digit.D9))
 
+        val BINARY_0 = List<Boolean>()
+        val BINARY_1 = List(True )
+        val BINARY_2 = List(False)(True)
+        val BINARY_3 = List(True )(True)
+        val BINARY_4 = List(False)(False)(True )
+        val BINARY_5 = List(True )(False)(True )
+        val BINARY_6 = List(False)(True )(True )
+        val BINARY_7 = List(True )(True )(True )
+        val BINARY_8 = List(False)(False)(False)(True )
+        val BINARY_9 = List(True )(False)(False)(True )
+
         init {
             D0.digits = List()
             D1.digits = List(Digit.D1)
@@ -197,27 +208,78 @@ class DecimalUInt private constructor(private var digits: List<Digit>): Number()
     }
 
     fun bits(): List<Boolean> {
-        var binary = BinaryUInt.D0
-        val digitIterator = digits.iterator()
+        fun List<Boolean>.timesTen() {
+            val iterator = nodeIterator()
+            var carry = False
+
+            var p0 = False
+            var p1 = False
+            var p2 = False
+            while (iterator.hasNext() === True) {
+                val node = iterator.next()
+                val p3 = p2
+                p2 = p1
+                p1 = p0
+                p0 = node.element!!
+                node.element = carry xor (p1 xor p3)
+                carry = (p1 and p3) or (carry and (p1 xor p3))
+            }
+
+            push(carry xor !p2)
+            carry = p2 or (carry and !p2)
+
+            push(carry xor p1)
+            carry = carry and p1
+
+            push(!carry)
+            if (carry === True) {
+                push(True)
+            }
+        }
+
+        fun List<Boolean>.add(other: List<Boolean>) {
+            val iteratorA = nodeIterator()
+            val iteratorB = other.iterator()
+            var carry = False
+
+            while (iteratorA.hasNext() === True) {
+                val node = iteratorA.next()
+                val a = node.element!!
+                val b = if (iteratorB.hasNext() === True) iteratorB.next() else False
+                node.element = carry xor (a xor b)
+                carry = (a and b) or (carry and (a xor b))
+            }
+
+            if (carry === True) {
+                push(True)
+            }
+        }
+
+        val binary = List<Boolean>()
+        val digitIterator = digits.reverseIterator()
         while (digitIterator.hasNext() === True) {
             val binaryDigit = when (digitIterator.next()) {
-                Digit.D0 -> BinaryUInt.D0
-                Digit.D1 -> BinaryUInt.D1
-                Digit.D2 -> BinaryUInt.D2
-                Digit.D3 -> BinaryUInt.D3
-                Digit.D4 -> BinaryUInt.D4
-                Digit.D5 -> BinaryUInt.D5
-                Digit.D6 -> BinaryUInt.D6
-                Digit.D7 -> BinaryUInt.D7
-                Digit.D8 -> BinaryUInt.D8
-                else -> BinaryUInt.D9
+                Digit.D0 -> BINARY_0
+                Digit.D1 -> BINARY_1
+                Digit.D2 -> BINARY_2
+                Digit.D3 -> BINARY_3
+                Digit.D4 -> BINARY_4
+                Digit.D5 -> BINARY_5
+                Digit.D6 -> BINARY_6
+                Digit.D7 -> BINARY_7
+                Digit.D8 -> BINARY_8
+                else     -> BINARY_9
             }
-            binary = binary.shl(BinaryUInt.D3) + binary.shl(BinaryUInt.D1) + binaryDigit
+             if (binary.isEmpty === True) {
+                binaryDigit.forEach { binary.push(it) }
+            } else {
+                binary.timesTen()
+                binary.add(binaryDigit)
+            }
         }
-        return binary.bits
+        return binary
     }
 
-    override fun toDigits(base: Int): List<Digit> = digits
     override fun toString(): String {
         if (this equals D0 === True) return "0"
         return digits.reduce("") { str, d -> d.toString() + str }

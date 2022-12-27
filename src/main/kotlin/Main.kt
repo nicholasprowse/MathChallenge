@@ -1,8 +1,16 @@
 fun main() {
-    var x = (U9)(U5)
-    while (x greaterThan U0 === True) {
-        println(x--)
+    println((U6)(U3)(U8)(U5)(U6)(U5)(U2)(U5) + (U5)(U3)(U2)(U8)(U0)(U9)(U4)(U1))
+    println(63856525 + 53280941)
+    val x = List<kotlin.Int>()
+    for (i in 0..1000) {
+        x(i)
     }
+    println(x[(U4)(U3)(U8)])
+//    println(List(0)(1)(2)(3)(4))
+//    var x = (U9)(U5)
+//    while (x greaterThan U0 === True) {
+//        println(x--)
+//    }
 
 //    val p = (U1)(I0)
 //    val pi = Math.pi(p)

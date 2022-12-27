@@ -50,5 +50,5 @@ class ListNode<T>(
     /*
     The right most descendant of this node
      */
-    val lastNode: ListNode<T> get() = rightChild?.firstNode ?: this
+    val lastNode: ListNode<T> get() = rightChild?.lastNode ?: this
 }

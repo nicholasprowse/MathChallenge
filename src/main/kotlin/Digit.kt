@@ -1,16 +1,5 @@
-class Digit {
-    companion object {
-        val D0 = Digit()
-        val D1 = Digit()
-        val D2 = Digit()
-        val D3 = Digit()
-        val D4 = Digit()
-        val D5 = Digit()
-        val D6 = Digit()
-        val D7 = Digit()
-        val D8 = Digit()
-        val D9 = Digit()
-    }
+enum class Digit {
+    D0, D1, D2, D3, D4, D5, D6, D7, D8, D9;
 
     /**
      * Returns a pair containing a boolean indicating carry, and a digit indicating the sum
@@ -273,22 +262,22 @@ class Digit {
     }
 
     infix fun lessThan(other: Digit): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.LESS) True else False
+        return if (this.compare(other) === ComparisonResult.LESS) True else False
     }
 
     infix fun greaterThan(other: Digit): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.GREATER) True else False
+        return if (this.compare(other) === ComparisonResult.GREATER) True else False
     }
 
     infix fun lessThanOrEqualTo(other: Digit): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.GREATER) False else True
+        return if (this.compare(other) === ComparisonResult.GREATER) False else True
     }
 
     infix fun greaterThanOrEqualTo(other: Digit): Boolean {
-        return if (this.compareTo(other) === ComparisonResult.LESS) False else True
+        return if (this.compare(other) === ComparisonResult.LESS) False else True
     }
 
-    fun compareTo(n: Digit): ComparisonResult {
+    fun compare(n: Digit): ComparisonResult {
         if (this === n) return ComparisonResult.EQUAL
         return when(this) {
             D0 -> ComparisonResult.LESS

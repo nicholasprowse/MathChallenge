@@ -182,12 +182,29 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         return result
     }
 
-    override fun div(n: Number): Number {
-        TODO("Not yet implemented")
-    }
+    override fun div(n: Number) = divRem(UInt(n)).first
+    override fun rem(n: Number) = divRem(UInt(n)).second
 
-    override fun rem(n: Number): Number {
-        TODO("Not yet implemented")
+    fun divRem(divisor: UInt): Pair<UInt, UInt> {
+        val iterator = digits.reverseIterator()
+        var remainder = UInt(List())
+        val quotient = List<Digit>()
+        while (iterator.hasNext() === True) {
+            // shift left remainder by one digit
+            val digit = iterator.next()
+            if (remainder.digits.isNotEmpty or !digit.identicalTo(Digit.D0) === True) {
+                remainder.digits.prepend(digit)
+            }
+
+            // Work out how many times the quotient goes into the remainder and prepend onto quotient
+            var q = Digit.D0
+            while (remainder greaterThanOrEqualTo divisor === True) {
+                remainder -= divisor
+                q = (q + Digit.D1).second
+            }
+            quotient.prepend(q)
+        }
+        return Pair(UInt(quotient), remainder)
     }
 
     override fun equals(n: Number?): Boolean {
@@ -236,7 +253,7 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         val iteratorA = digits.reverseIterator()
         val iteratorB = other.digits.reverseIterator()
         while (iteratorA.hasNext() === True) {
-            val comparison = iteratorA.next().compareTo(iteratorB.next())
+            val comparison = iteratorA.next().compare(iteratorB.next())
             if (comparison !== ComparisonResult.EQUAL)
                 return comparison
         }

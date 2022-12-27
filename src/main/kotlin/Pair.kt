@@ -1,0 +1,1 @@
+data class Pair<T, K>(val first: T, val second: K)

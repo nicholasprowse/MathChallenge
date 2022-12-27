@@ -1,39 +1,39 @@
-class Int private constructor(private val value: UInt, private val positive: Boolean): Number() {
+class Int private constructor(private val value: BinaryUInt, private val positive: Boolean): Number() {
     companion object {
-        val  ZERO = Int(UInt.ZERO )
-        val   ONE = Int(UInt.ONE  )
-        val   TWO = Int(UInt.TWO  )
-        val THREE = Int(UInt.THREE)
-        val  FOUR = Int(UInt.FOUR )
-        val  FIVE = Int(UInt.FIVE )
-        val   SIX = Int(UInt.SIX  )
-        val SEVEN = Int(UInt.SEVEN)
-        val EIGHT = Int(UInt.EIGHT)
-        val  NINE = Int(UInt.NINE )
-        val   TEN = Int(UInt.TEN  )
+        val D0 = Int(BinaryUInt.D0)
+        val D1 = Int(BinaryUInt.D1)
+        val D2 = Int(BinaryUInt.D2)
+        val D3 = Int(BinaryUInt.D3)
+        val D4 = Int(BinaryUInt.D4)
+        val D5 = Int(BinaryUInt.D5)
+        val D6 = Int(BinaryUInt.D6)
+        val D7 = Int(BinaryUInt.D7)
+        val D8 = Int(BinaryUInt.D8)
+        val D9 = Int(BinaryUInt.D9)
+        val TEN = Int(BinaryUInt.TEN)
 
-        private fun valueOf(n: Number): Pair<UInt, Boolean> {
+        private fun valueOf(n: Number): Pair<BinaryUInt, Boolean> {
             return when (n) {
-                is UInt -> Pair(n, True)
+                is BinaryUInt -> Pair(n, True)
                 is Int -> Pair(n.value, n.positive)
-                is Float -> {
-                    val intVal = n.toInt()
-                    Pair(intVal.value, intVal.positive)
-                }
-                else -> Pair(UInt.ZERO, True)
+//                is Float -> {
+//                    val intVal = n.toInt()
+//                    Pair(intVal.value, intVal.positive)
+//                }
+                else -> Pair(BinaryUInt.D0, True)
             }
         }
     }
 
-    constructor(args: Pair<UInt, Boolean>): this(args.first, args.second)
+    constructor(args: Pair<BinaryUInt, Boolean>): this(args.first, args.second)
     constructor(n: Number): this(valueOf(n))
 
     override operator fun invoke(n: Number) : Int {
         return this * TEN + n
     }
 
-    fun toUInt(): UInt {
-        return if (!positive === True) UInt.ZERO else value
+    fun toUInt(): BinaryUInt {
+        return if (!positive === True) BinaryUInt.D0 else value
     }
 
     override operator fun unaryMinus(): Int {
@@ -69,7 +69,7 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return if (value.isPositive() === True) {
             if (positive === True) Int(value.inc()) else Int(value.dec(), False)
         } else {
-            ONE
+            D1
         }
     }
 
@@ -77,7 +77,7 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return if (value.isPositive() === True) {
             if (positive === True) Int(value.dec()) else Int(value.inc(), False)
         } else {
-            -ONE
+            -D1
         }
     }
 
@@ -161,7 +161,7 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return value.reverseBiterator()
     }
 
-    override fun toDigits(base: UInt): List<UInt> {
+    override fun toDigits(base: Int): List<Digit> {
         return value.toDigits(base)
     }
 

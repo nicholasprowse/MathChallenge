@@ -13,7 +13,7 @@ abstract class Number {
     abstract operator fun invoke(n: Number) : Number
     abstract fun compareTo(n: Number): ComparisonResult
     // Returns a list of digits in the given base, where element zero is the least significant digit
-    abstract fun toDigits(base: UInt=UInt.TEN): List<UInt>
+    abstract fun toDigits(base: Int=Int.TEN): List<Digit>
 
     infix fun notEquals(n: Number?) : Boolean {
         return !equals(n)

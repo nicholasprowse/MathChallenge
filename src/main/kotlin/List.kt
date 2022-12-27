@@ -14,12 +14,12 @@ class List<T>(element: T? = null) {
     private val lastNode get() = _lastNode
     val last get() = lastNode!!.element!!
 
-    private var _length: UInt = if (element.isNotNull === True) UInt.ONE else UInt.ZERO
-    val length: UInt get() = _length
+    private var _length: BinaryUInt = if (element.isNotNull === True) BinaryUInt.D1 else BinaryUInt.D0
+    val length: BinaryUInt get() = _length
     val isEmpty get() = root.isNull
     val isNotEmpty get() = root.isNotNull
 
-    private var depth: UInt = _length
+    private var depth: BinaryUInt = _length
 
     operator fun invoke(element: T) : List<T> {
         if (root.isNull === True) {
@@ -39,9 +39,7 @@ class List<T>(element: T? = null) {
         return this
     }
 
-    fun push(element: T) {
-        this(element)
-    }
+    fun push(element: T): List<T> = this(element)
 
     fun pop() {
         _lastNode = lastNode?.previousNode
@@ -56,10 +54,10 @@ class List<T>(element: T? = null) {
         _length = decrement(_length)
     }
 
-    fun insert(element: T, index: UInt) {
+    fun insert(element: T, index: BinaryUInt): List<T> {
         if (index equals length === True) {
             push(element)
-            return
+            return this
         }
 
         val node = getNode(index)
@@ -71,9 +69,10 @@ class List<T>(element: T? = null) {
             currentNode = currentNode.previousNode!!
         }
         node.element = element
+        return this
     }
 
-    fun prepend(element: T) {
+    fun prepend(element: T): List<T> {
         push(element) // Doesn't matter what we push, it will be overwritten
         var currentNode = lastNode!!
         while (currentNode !== firstNode) {
@@ -81,24 +80,25 @@ class List<T>(element: T? = null) {
             currentNode = currentNode.previousNode!!
         }
         firstNode!!.element = element
+        return this
     }
 
-    operator fun get(index: UInt) : T {
+    operator fun get(index: BinaryUInt) : T {
         return getNode(index)!!.element!!
     }
 
-    operator fun set(index: UInt, element: T) {
+    operator fun set(index: BinaryUInt, element: T) {
         getNode(index)!!.element = element
     }
 
-    private fun getNode(index: UInt): ListNode<T>? {
+    private fun getNode(index: BinaryUInt): ListNode<T>? {
         if (index greaterThanOrEqualTo length === True) {
             return null
         }
 
         val biterator = index.biterator()
         var node = ListNode<Boolean>(null)
-        var listLength = UInt.ONE
+        var listLength = BinaryUInt.D1
         while(biterator.hasNext() === True) {
             node.nextNode = ListNode(biterator.next())
             node = node.nextNode!!
@@ -120,30 +120,30 @@ class List<T>(element: T? = null) {
         return treeNode!!
     }
 
-    private fun increment(value: UInt) : UInt {
-        return   if (value === UInt.ZERO ) UInt.ONE
-            else if (value === UInt.ONE  ) UInt.TWO
-            else if (value === UInt.TWO  ) UInt.THREE
-            else if (value === UInt.THREE) UInt.FOUR
-            else if (value === UInt.FOUR ) UInt.FIVE
-            else if (value === UInt.FIVE ) UInt.SIX
-            else if (value === UInt.SIX  ) UInt.SEVEN
-            else if (value === UInt.SEVEN) UInt.EIGHT
-            else if (value === UInt.EIGHT) UInt.NINE
-            else value + UInt.ONE
+    private fun increment(value: BinaryUInt) : BinaryUInt {
+        return if (value === BinaryUInt.D0) BinaryUInt.D1
+            else if (value === BinaryUInt.D1) BinaryUInt.D2
+            else if (value === BinaryUInt.D2) BinaryUInt.D3
+            else if (value === BinaryUInt.D3) BinaryUInt.D4
+            else if (value === BinaryUInt.D4) BinaryUInt.D5
+            else if (value === BinaryUInt.D5) BinaryUInt.D6
+            else if (value === BinaryUInt.D6) BinaryUInt.D7
+            else if (value === BinaryUInt.D7) BinaryUInt.D8
+            else if (value === BinaryUInt.D8) BinaryUInt.D9
+            else value + BinaryUInt.D1
     }
 
-    private fun decrement(value: UInt) : UInt {
-        return   if (value === UInt.ONE  ) UInt.ZERO
-            else if (value === UInt.TWO  ) UInt.ONE
-            else if (value === UInt.THREE) UInt.TWO
-            else if (value === UInt.FOUR ) UInt.THREE
-            else if (value === UInt.FIVE ) UInt.FOUR
-            else if (value === UInt.SIX  ) UInt.FIVE
-            else if (value === UInt.SEVEN) UInt.SIX
-            else if (value === UInt.EIGHT) UInt.SEVEN
-            else if (value equals UInt.NINE === True) UInt.EIGHT
-            else value - UInt.ONE
+    private fun decrement(value: BinaryUInt) : BinaryUInt {
+        return if (value === BinaryUInt.D1) BinaryUInt.D0
+            else if (value === BinaryUInt.D2) BinaryUInt.D1
+            else if (value === BinaryUInt.D3) BinaryUInt.D2
+            else if (value === BinaryUInt.D4) BinaryUInt.D3
+            else if (value === BinaryUInt.D5) BinaryUInt.D4
+            else if (value === BinaryUInt.D6) BinaryUInt.D5
+            else if (value === BinaryUInt.D7) BinaryUInt.D6
+            else if (value === BinaryUInt.D8) BinaryUInt.D7
+            else if (value equals BinaryUInt.D9 === True) BinaryUInt.D8
+            else value - BinaryUInt.D1
     }
 
     private fun doubleCapacity() {
@@ -162,9 +162,9 @@ class List<T>(element: T? = null) {
         return copy
     }
 
-    fun forEach(function: (UInt, T) -> Unit) {
+    fun forEach(function: (BinaryUInt, T) -> Unit) {
         val iterator = iterator()
-        var i = UInt.ZERO
+        var i = BinaryUInt.D0
         while (iterator.hasNext() === True) {
             function(i, iterator.next())
             i++
@@ -178,10 +178,10 @@ class List<T>(element: T? = null) {
         }
     }
 
-    inline fun<reified K> map(function: (UInt, T) -> K): List<K> {
+    inline fun<reified K> map(function: (BinaryUInt, T) -> K): List<K> {
         val list = List<K>()
         val iterator = iterator()
-        var i = UInt.ZERO
+        var i = BinaryUInt.D0
         while (iterator.hasNext() === True) {
             list.push(function(i, iterator.next()))
             i++
@@ -198,10 +198,10 @@ class List<T>(element: T? = null) {
         return list
     }
 
-    fun filter(predicate: (UInt, T) -> Boolean): List<T> {
+    fun filter(predicate: (BinaryUInt, T) -> Boolean): List<T> {
         val list = List<T>()
         val iterator = iterator()
-        var i = UInt.ZERO
+        var i = BinaryUInt.D0
         while (iterator.hasNext() === True) {
             val value = iterator.next()
             if (predicate(i, value) === True) {
@@ -274,7 +274,7 @@ class List<T>(element: T? = null) {
     }
 
     companion object {
-        fun<T> repeating(value: T, count: UInt) : List<T> {
+        fun<T> repeating(value: T, count: BinaryUInt) : List<T> {
             val array = List<T>()
             while (array.length lessThan count === True) {
                 array.push(value)

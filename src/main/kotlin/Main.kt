@@ -1,5 +1,5 @@
 fun main() {
-    println(Digit.D9 + Digit.D8)
+    println((U2)(U7)(U4) + (U1)(U9)(U2)(U7))
 
 //    val p = (U1)(I0)
 //    val pi = Math.pi(p)

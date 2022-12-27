@@ -32,7 +32,7 @@ so collections must be built from scratch without any preexisting functionalty.
 At the time of writing, I have successfully created the following classes, each with all the standard functionality
 - Boolean
 - List<T>
-- UInt (unsigned int)
+- BinaryUInt (unsigned int)
 - Int (signed int)
 - Float
 - Some basing math operations such as floor, ceiling, round, max, min and factorial

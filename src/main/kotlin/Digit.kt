@@ -12,7 +12,10 @@ class Digit {
         val D9 = Digit()
     }
 
-    operator fun plus(n: Digit): List<Digit> {
+    /**
+     * Returns a pair containing a boolean indicating carry, and a digit indicating the sum
+     */
+    operator fun plus(n: Digit): Pair<Boolean, Digit> {
         // Ensure that a <= b
         var a = this
         var b = n
@@ -21,68 +24,68 @@ class Digit {
             b = this
         }
         return when(a) {
-            D0 -> List(b)
+            D0 -> Pair(False, b)
             D1 -> when(b) {
-                D1 -> List(D2)
-                D2 -> List(D3)
-                D3 -> List(D4)
-                D4 -> List(D5)
-                D5 -> List(D6)
-                D6 -> List(D7)
-                D7 -> List(D8)
-                D8 -> List(D9)
-                else -> List(D0)(D1)
+                D1 -> Pair(False, D2)
+                D2 -> Pair(False, D3)
+                D3 -> Pair(False, D4)
+                D4 -> Pair(False, D5)
+                D5 -> Pair(False, D6)
+                D6 -> Pair(False, D7)
+                D7 -> Pair(False, D8)
+                D8 -> Pair(False, D9)
+                else -> Pair(True, D0)
             }
             D2 -> when(b) {
-                D2 -> List(D4)
-                D3 -> List(D5)
-                D4 -> List(D6)
-                D5 -> List(D7)
-                D6 -> List(D8)
-                D7 -> List(D9)
-                D8 -> List(D0)(D1)
-                else -> List(D1)(D1)
+                D2 -> Pair(False, D4)
+                D3 -> Pair(False, D5)
+                D4 -> Pair(False, D6)
+                D5 -> Pair(False, D7)
+                D6 -> Pair(False, D8)
+                D7 -> Pair(False, D9)
+                D8 -> Pair(True, D0)
+                else -> Pair(True, D1)
             }
             D3 -> when(b) {
-                D3 -> List(D6)
-                D4 -> List(D7)
-                D5 -> List(D8)
-                D6 -> List(D9)
-                D7 -> List(D0)(D1)
-                D8 -> List(D1)(D1)
-                else -> List(D2)(D1)
+                D3 -> Pair(False, D6)
+                D4 -> Pair(False, D7)
+                D5 -> Pair(False, D8)
+                D6 -> Pair(False, D9)
+                D7 -> Pair(True, D0)
+                D8 -> Pair(True, D1)
+                else -> Pair(True, D2)
             }
             D4 -> when(b) {
-                D4 -> List(D8)
-                D5 -> List(D9)
-                D6 -> List(D0)(D1)
-                D7 -> List(D1)(D1)
-                D8 -> List(D2)(D1)
-                else -> List(D3)(D1)
+                D4 -> Pair(False, D8)
+                D5 -> Pair(False, D9)
+                D6 -> Pair(True, D0)
+                D7 -> Pair(True, D1)
+                D8 -> Pair(True, D2)
+                else -> Pair(True, D3)
             }
             D5 -> when(b) {
-                D5 -> List(D0)(D1)
-                D6 -> List(D1)(D1)
-                D7 -> List(D2)(D1)
-                D8 -> List(D3)(D1)
-                else -> List(D4)(D1)
+                D5 -> Pair(True, D0)
+                D6 -> Pair(True, D1)
+                D7 -> Pair(True, D2)
+                D8 -> Pair(True, D3)
+                else -> Pair(True, D4)
             }
             D6 -> when(b) {
-                D6 -> List(D2)(D1)
-                D7 -> List(D3)(D1)
-                D8 -> List(D4)(D1)
-                else -> List(D5)(D1)
+                D6 -> Pair(True, D2)
+                D7 -> Pair(True, D3)
+                D8 -> Pair(True, D4)
+                else -> Pair(True, D5)
             }
             D7 -> when(b) {
-                D7 -> List(D4)(D1)
-                D8 -> List(D5)(D1)
-                else -> List(D6)(D1)
+                D7 -> Pair(True, D4)
+                D8 -> Pair(True, D5)
+                else -> Pair(True, D6)
             }
             D8 -> when(b) {
-                D8 -> List(D6)(D1)
-                else -> List(D7)(D1)
+                D8 -> Pair(True, D6)
+                else -> Pair(True, D7)
             }
-            else -> List(D8)(D1)
+            else -> Pair(True, D8)
         }
     }
 

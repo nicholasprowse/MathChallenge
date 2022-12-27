@@ -208,6 +208,70 @@ class Digit {
         }
     }
 
+    operator fun times(n: Digit): Pair<Digit, Digit> {
+        // Ensure that a <= b
+        var a = this
+        var b = n
+        if (a greaterThan b === True) {
+            a = n
+            b = this
+        }
+        return when(a) {
+            D0 -> Pair(D0, D0)
+            D1 -> Pair(D0, b)
+            D2 -> when(b) {
+                D2 -> Pair(D0, D4)
+                D3 -> Pair(D0, D6)
+                D4 -> Pair(D0, D8)
+                D5 -> Pair(D1, D0)
+                D6 -> Pair(D1, D2)
+                D7 -> Pair(D1, D4)
+                D8 -> Pair(D1, D6)
+                else -> Pair(D1, D8)
+            }
+            D3 -> when(b) {
+                D3 -> Pair(D0, D9)
+                D4 -> Pair(D1, D2)
+                D5 -> Pair(D1, D5)
+                D6 -> Pair(D1, D8)
+                D7 -> Pair(D2, D1)
+                D8 -> Pair(D2, D4)
+                else -> Pair(D2, D7)
+            }
+            D4 -> when(b) {
+                D4 -> Pair(D1, D6)
+                D5 -> Pair(D2, D0)
+                D6 -> Pair(D2, D4)
+                D7 -> Pair(D2, D8)
+                D8 -> Pair(D3, D2)
+                else -> Pair(D3, D6)
+            }
+            D5 -> when(b) {
+                D5 -> Pair(D2, D5)
+                D6 -> Pair(D3, D0)
+                D7 -> Pair(D3, D5)
+                D8 -> Pair(D4, D0)
+                else -> Pair(D4, D5)
+            }
+            D6 -> when(b) {
+                D6 -> Pair(D3, D6)
+                D7 -> Pair(D4, D2)
+                D8 -> Pair(D4, D8)
+                else -> Pair(D5, D4)
+            }
+            D7 -> when(b) {
+                D7 -> Pair(D4, D9)
+                D8 -> Pair(D5, D6)
+                else -> Pair(D6, D3)
+            }
+            D8 -> when(b) {
+                D8 -> Pair(D6, D4)
+                else -> Pair(D7, D2)
+            }
+            else -> Pair(D8, D1)
+        }
+    }
+
     infix fun lessThan(other: Digit): Boolean {
         return if (this.compareTo(other) === ComparisonResult.LESS) True else False
     }

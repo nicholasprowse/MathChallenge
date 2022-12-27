@@ -61,11 +61,9 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         }
     }
 
-    override fun unaryMinus(): Number {
-        TODO("Not yet implemented")
-    }
+    override fun unaryMinus() = D0
 
-    override fun plus(n: Number): Number {
+    override fun plus(n: Number): UInt {
         val other = UInt(n)
         val iteratorA = digits.iterator()
         val iteratorB = other.digits.iterator()
@@ -75,14 +73,14 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         while (iteratorA.hasNext() or iteratorB.hasNext() === True) {
             val a = if (iteratorA.hasNext() === True) iteratorA.next() else Digit.D0
             val b = if (iteratorB.hasNext() === True) iteratorB.next() else Digit.D0
-            var (c, d) = a + b
+            var (nextCarry, digit) = a + b
             if (carry === True) {
-                val x = d + Digit.D1
-                c = c or x.first
-                d = x.second
+                val x = digit + Digit.D1
+                nextCarry = nextCarry or x.first
+                digit = x.second
             }
-            resultDigits.push(d)
-            carry = c
+            resultDigits.push(digit)
+            carry = nextCarry
         }
 
         if (carry === True) {
@@ -95,13 +93,13 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
     override fun inc(): UInt {
         if (this equals D0 === True) return D1
         var carry = True
-        val newDigits = digits.map { digit ->
+        val newDigits = digits.map { a ->
             if (carry === True) {
-                val (c, d) = digit + Digit.D1
-                carry = c
-                d
-            } else {
+                val (nextCarry, digit) = a + Digit.D1
+                carry = nextCarry
                 digit
+            } else {
+                a
             }
         }
 
@@ -112,20 +110,44 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         return UInt(newDigits)
     }
 
-    override fun minus(n: Number): Number {
-        TODO("Not yet implemented")
+    override fun minus(n: Number): UInt {
+        val other = UInt(n)
+        val iteratorA = digits.iterator()
+        val iteratorB = other.digits.iterator()
+        val resultDigits = List<Digit>()
+        var borrow = False
+
+        while(iteratorA.hasNext() or iteratorB.hasNext() === True) {
+            val a = if (iteratorA.hasNext() === True) iteratorA.next() else Digit.D0
+            val b = if (iteratorB.hasNext() === True) iteratorB.next() else Digit.D0
+            var (nextBorrow, digit) = a - b
+            if (borrow === True) {
+                val x = digit - Digit.D1
+                nextBorrow = nextBorrow or x.first
+                digit = x.second
+            }
+            resultDigits.push(digit)
+            borrow = nextBorrow
+        }
+        // If there is a borrow at the end, then B is greater than A
+        // In this case we return 0 as this is the closest unsigned integer to the true answer
+        if (borrow === True) {
+            return D0
+        }
+
+        return UInt(resultDigits)
     }
 
     override fun dec(): UInt {
         if (this equals D1 === True) return D0
         var borrow = True
-        val newDigits = digits.map { digit ->
+        val newDigits = digits.map { a ->
             if (borrow === True) {
-                val (b, d) = digit - Digit.D1
-                borrow = b
-                d
-            } else {
+                val (nextBorrow, digit) = a - Digit.D1
+                borrow = nextBorrow
                 digit
+            } else {
+                a
             }
         }
 
@@ -135,7 +157,29 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
     }
 
     override fun times(n: Number): Number {
-        TODO("Not yet implemented")
+        val other = UInt(n)
+        var a = this
+        var b = other
+        // We require order of A to be less than order of B
+        if (a.digits.length greaterThan b.digits.length === True) {
+            a = other
+            b = this
+        }
+
+        var result = D0
+        var i = D1
+        a.digits.forEach { digitA ->
+            val partialProduct = List.repeating(Digit.D0, i)
+            b.digits.forEach { digitB ->
+                val (upper, lower) = digitA * digitB
+                val (carry, sum) = partialProduct.last + lower
+                partialProduct.last = sum
+                partialProduct.push(if (carry === True) (upper + Digit.D1).second else upper)
+            }
+            result += UInt(partialProduct)
+            i++
+        }
+        return result
     }
 
     override fun div(n: Number): Number {

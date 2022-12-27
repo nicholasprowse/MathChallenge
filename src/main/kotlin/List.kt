@@ -8,11 +8,17 @@ class List<T>(element: T? = null) {
         }
         return _firstNode
     }
-    val first get() = firstNode!!.element!!
+    var first get() = firstNode!!.element!!
+        set(value) {
+            firstNode!!.element = value
+        }
 
     private var _lastNode = root
     private val lastNode get() = _lastNode
-    val last get() = lastNode!!.element!!
+    var last get() = lastNode!!.element!!
+        set(value) {
+            lastNode!!.element = value
+        }
 
     private var _length: UInt = if (element.isNotNull === True) UInt.D1 else UInt.D0
     val length: UInt get() = _length

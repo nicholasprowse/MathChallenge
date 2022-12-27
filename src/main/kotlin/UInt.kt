@@ -156,7 +156,7 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         return if (borrow === True) D0 else UInt(newDigits)
     }
 
-    override fun times(n: Number): Number {
+    override fun times(n: Number): UInt {
         val other = UInt(n)
         var a = this
         var b = other

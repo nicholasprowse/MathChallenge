@@ -1,5 +1,5 @@
-//class Math {
-//    companion object {
+class Math {
+    companion object {
 //        fun pi(digits: Number): Float {
 //            val d = BinaryUInt(digits)
 //            val c = (F4)(F2)(F6)(F8)(F8)(F0) * sqrt((F1)(F0)(F0)(F0)(F5).withPrecision(d + U7))
@@ -91,15 +91,15 @@
 //            return if (x lessThan Int.ZERO === True) -x as T else x
 //        }
 //
-//        fun factorial(n: BinaryUInt): BinaryUInt {
-//            var i = n
-//            var result = BinaryUInt.ONE
-//            while (i.isPositive() === True) {
-//                result *= i
-//                i--
-//            }
-//            return result
-//        }
+        fun factorial(n: UInt): UInt {
+            var i = n
+            var result = UInt.D1
+            while (i greaterThan UInt.D0 === True) {
+                result *= i
+                i--
+            }
+            return result
+        }
 //
 //        /*
 //        x = a^b
@@ -176,5 +176,5 @@
 //            }
 //            return current
 //        }
-//    }
-//}
+    }
+}

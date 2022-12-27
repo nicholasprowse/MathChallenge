@@ -14,12 +14,12 @@ class List<T>(element: T? = null) {
     private val lastNode get() = _lastNode
     val last get() = lastNode!!.element!!
 
-    private var _length: DecimalUInt = if (element.isNotNull === True) DecimalUInt.D1 else DecimalUInt.D0
-    val length: DecimalUInt get() = _length
+    private var _length: UInt = if (element.isNotNull === True) UInt.D1 else UInt.D0
+    val length: UInt get() = _length
     val isEmpty get() = root.isNull
     val isNotEmpty get() = root.isNotNull
 
-    private var depth: DecimalUInt = _length
+    private var depth: UInt = _length
 
     operator fun invoke(element: T) : List<T> {
         if (root.isNull === True) {
@@ -54,7 +54,7 @@ class List<T>(element: T? = null) {
         _length--
     }
 
-    fun insert(element: T, index: DecimalUInt): List<T> {
+    fun insert(element: T, index: UInt): List<T> {
         if (index equals length === True) {
             push(element)
             return this
@@ -83,22 +83,22 @@ class List<T>(element: T? = null) {
         return this
     }
 
-    operator fun get(index: DecimalUInt) : T {
+    operator fun get(index: UInt) : T {
         return getNode(index)!!.element!!
     }
 
-    operator fun set(index: DecimalUInt, element: T) {
+    operator fun set(index: UInt, element: T) {
         getNode(index)!!.element = element
     }
 
-    private fun getNode(index: DecimalUInt): ListNode<T>? {
+    private fun getNode(index: UInt): ListNode<T>? {
         if (index greaterThanOrEqualTo length === True) {
             return null
         }
 
         val biterator = index.bits().iterator()
         var node = ListNode<Boolean>(null)
-        var listLength = DecimalUInt.D1
+        var listLength = UInt.D1
         while(biterator.hasNext() === True) {
             node.nextNode = ListNode(biterator.next())
             node = node.nextNode!!
@@ -136,9 +136,9 @@ class List<T>(element: T? = null) {
         return copy
     }
 
-    fun forEachIndexed(function: (DecimalUInt, T) -> Unit) {
+    fun forEachIndexed(function: (UInt, T) -> Unit) {
         val iterator = iterator()
-        var i = DecimalUInt.D0
+        var i = UInt.D0
         while (iterator.hasNext() === True) {
             function(i, iterator.next())
             i++
@@ -152,10 +152,10 @@ class List<T>(element: T? = null) {
         }
     }
 
-    inline fun<reified K> mapIndexed(function: (DecimalUInt, T) -> K): List<K> {
+    inline fun<reified K> mapIndexed(function: (UInt, T) -> K): List<K> {
         val list = List<K>()
         val iterator = iterator()
-        var i = DecimalUInt.D0
+        var i = UInt.D0
         while (iterator.hasNext() === True) {
             list.push(function(i, iterator.next()))
             i++
@@ -172,10 +172,10 @@ class List<T>(element: T? = null) {
         return list
     }
 
-    fun filterIndexed(predicate: (DecimalUInt, T) -> Boolean): List<T> {
+    fun filterIndexed(predicate: (UInt, T) -> Boolean): List<T> {
         val list = List<T>()
         val iterator = iterator()
-        var i = DecimalUInt.D0
+        var i = UInt.D0
         while (iterator.hasNext() === True) {
             val value = iterator.next()
             if (predicate(i, value) === True) {
@@ -265,7 +265,7 @@ class List<T>(element: T? = null) {
     }
 
     companion object {
-        fun<T> repeating(value: T, count: DecimalUInt) : List<T> {
+        fun<T> repeating(value: T, count: UInt) : List<T> {
             val array = List<T>()
             while (array.length lessThan count === True) {
                 array.push(value)

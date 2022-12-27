@@ -8,8 +8,6 @@ abstract class Number {
     abstract operator fun div(n: Number): Number
     abstract operator fun rem(n: Number): Number
     abstract infix fun equals(n: Number?) : Boolean
-    abstract infix fun shr(n: Number): Number
-    abstract infix fun shl(n: Number): Number
     abstract operator fun invoke(n: Number) : Number
     abstract fun compareTo(n: Number): ComparisonResult
 

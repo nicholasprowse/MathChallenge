@@ -1,16 +1,16 @@
 val True = Boolean.True
 val False = Boolean.False
 
-val U0 = DecimalUInt.D0
-val U1 = DecimalUInt.D1
-val U2 = DecimalUInt.D2
-val U3 = DecimalUInt.D3
-val U4 = DecimalUInt.D4
-val U5 = DecimalUInt.D5
-val U6 = DecimalUInt.D6
-val U7 = DecimalUInt.D7
-val U8 = DecimalUInt.D8
-val U9 = DecimalUInt.D9
+val U0 = UInt.D0
+val U1 = UInt.D1
+val U2 = UInt.D2
+val U3 = UInt.D3
+val U4 = UInt.D4
+val U5 = UInt.D5
+val U6 = UInt.D6
+val U7 = UInt.D7
+val U8 = UInt.D8
+val U9 = UInt.D9
 
 //val I0 = Int.ZERO
 //val I1 = Int.ONE

@@ -10,6 +10,9 @@ abstract class Number {
     abstract infix fun equals(n: Number?) : Boolean
     abstract operator fun invoke(n: Number) : Number
     abstract fun compareTo(n: Number): ComparisonResult
+    abstract fun isPositive(): Boolean
+    abstract fun isZero(): Boolean
+    abstract fun isNegative(): Boolean
 
     infix fun notEquals(n: Number?) : Boolean {
         return !equals(n)

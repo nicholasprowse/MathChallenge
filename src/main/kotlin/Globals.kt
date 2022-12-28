@@ -12,17 +12,17 @@ val U7 = UInt.D7
 val U8 = UInt.D8
 val U9 = UInt.D9
 
-//val I0 = Int.ZERO
-//val I1 = Int.ONE
-//val I2 = Int.TWO
-//val I3 = Int.THREE
-//val I4 = Int.FOUR
-//val I5 = Int.FIVE
-//val I6 = Int.SIX
-//val I7 = Int.SEVEN
-//val I8 = Int.EIGHT
-//val I9 = Int.NINE
-//
+val I0 = Int.D0
+val I1 = Int.D1
+val I2 = Int.D2
+val I3 = Int.D3
+val I4 = Int.D4
+val I5 = Int.D5
+val I6 = Int.D6
+val I7 = Int.D7
+val I8 = Int.D8
+val I9 = Int.D9
+
 //val F0 = Float.ZERO
 //val F1 = Float.ONE
 //val F2 = Float.TWO

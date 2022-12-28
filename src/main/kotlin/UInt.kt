@@ -26,18 +26,17 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
             D0.digits = List()
             D1.digits = List(Digit.D1)
         }
-        private fun valueOf(n: Number): List<Digit> {
+        private fun valueOf(n: Number): UInt {
             return when(n) {
-                is UInt -> n.digits
-//                is BinaryUInt -> n.bits
-//                is Int -> n.toUInt().bits
+                is UInt -> n
+                is Int -> n.toUInt()
 //                is Float -> n.toInt().toUInt().bits
-                else -> List()
+                else -> D0
             }
         }
     }
 
-    constructor(n: Number): this(valueOf(n))
+    constructor(n: Number): this(valueOf(n).digits)
     init {
         // Remove leading zeros
         while (digits.isNotEmpty === True) {
@@ -51,7 +50,7 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
 
 
     override operator fun invoke(n: Number) : UInt {
-        val digit = valueOf(n)
+        val digit = valueOf(n).digits
         return if (digit.length equals D1 === True) {
             UInt(digits.copy().prepend(digit.first))
         } else if (digit.length equals D0 === True) {
@@ -249,6 +248,10 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         }
     }
 
+    override fun isPositive() = digits.isNotEmpty
+    override fun isZero() = digits.isEmpty
+    override fun isNegative() = False
+
     private fun compareWithEqualDigitSize(other: UInt): ComparisonResult {
         val iteratorA = digits.reverseIterator()
         val iteratorB = other.digits.reverseIterator()
@@ -334,7 +337,9 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
     }
 
     override fun toString(): String {
-        if (this equals D0 === True) return "0"
-        return digits.reduce("") { str, d -> d.toString() + str }
+        return if (isZero() === True)
+            "0"
+        else
+            digits.reduce("") { str, d -> d.toString() + str }
     }
 }

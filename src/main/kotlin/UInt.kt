@@ -60,6 +60,7 @@ class UInt constructor(private var digits: List<Digit>): Number() {
         }
     }
 
+    val numDigits get() = digits.length
     override fun unaryMinus() = D0
 
     override fun plus(n: Number): UInt {
@@ -168,14 +169,16 @@ class UInt constructor(private var digits: List<Digit>): Number() {
         var result = D0
         var i = D1
         a.digits.forEach { digitA ->
-            val partialProduct = List.repeating(Digit.D0, i)
-            b.digits.forEach { digitB ->
-                val (upper, lower) = digitA * digitB
-                val (carry, sum) = partialProduct.last + lower
-                partialProduct.last = sum
-                partialProduct.push(if (carry === True) (upper + Digit.D1).second else upper)
+            if (digitA !== Digit.D0) {
+                val partialProduct = List.repeating(Digit.D0, i)
+                b.digits.forEach { digitB ->
+                    val (upper, lower) = digitA * digitB
+                    val (carry, sum) = partialProduct.last + lower
+                    partialProduct.last = sum
+                    partialProduct.push(if (carry === True) (upper + Digit.D1).second else upper)
+                }
+                result += UInt(partialProduct)
             }
-            result += UInt(partialProduct)
             i++
         }
         return result

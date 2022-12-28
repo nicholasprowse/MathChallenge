@@ -1,4 +1,4 @@
-class Float private constructor(private val value: Int, private val precision: UInt): Number() {
+class Float private constructor(private val value: Int, precision: UInt): Number() {
 
     companion object {
         val D0 = Float(Int.D0)
@@ -28,6 +28,11 @@ class Float private constructor(private val value: Int, private val precision: U
 
     constructor(n: Float): this(n.value, n.precision)
     constructor(n: Number): this(valueOf(n))
+    var precision: UInt private set
+
+    init {
+        this.precision = precision
+    }
 
     override operator fun invoke(n: Number) : Float {
         return this * TEN + n
@@ -69,8 +74,10 @@ class Float private constructor(private val value: Int, private val precision: U
     }
 
     infix fun multiplyExact(n: Number): Float {
-        val other = Float(n)
-        return Float(value * other.value, precision + other.precision)
+        val a = dropTrailingZeros()
+        val b = Float(n).dropTrailingZeros()
+        return Float(a.value * b.value, a.precision + b.precision)
+            .requirePrecision(Math.max(precision, Float(n).precision))
     }
 
     override operator fun div(n: Number): Float {
@@ -157,6 +164,10 @@ class Float private constructor(private val value: Int, private val precision: U
         val digits = if (difference.isPositive() === True) {
             // New precision is less than current, so skip required digits to truncate them
             while (difference.isPositive() === True) {
+                // If the iterator ends, then the rest of the digits are leading zeros
+                if (digitIterator.hasNext() === False) {
+                    return Float(Int.D0, precision)
+                }
                 digitIterator.next()
                 difference--
             }
@@ -169,6 +180,24 @@ class Float private constructor(private val value: Int, private val precision: U
             digits.push(digitIterator.next())
         }
         return Float(Int(UInt(digits)).copySign(this), precision)
+    }
+
+    // Returns an equivalent Float with at least the given precision. Will not reduce precision
+    fun requirePrecision(precision: UInt): Float {
+        return if (precision greaterThan this.precision === True) withPrecision(precision) else this
+    }
+
+    // Returns an equivalent Float with the precision set so there are no trailing zeros
+    fun dropTrailingZeros(): Float {
+        val iterator = value.digitIterator()
+        var numZeros = UInt.D0
+        while (iterator.hasNext() and iterator.next().identicalTo(Digit.D0) === True) {
+            numZeros++
+        }
+        return if (precision lessThan numZeros === True)
+            withPrecision(UInt.D0)
+        else
+            withPrecision(precision - numZeros)
     }
 
 //    // rounds the float to the given number of digits
@@ -186,13 +215,6 @@ class Float private constructor(private val value: Int, private val precision: U
 //
 //    }
 
-//    fun toDigits(base: Int): List<Digit> {
-//        val numDigits = Int(Math.floor(-Float(exponent) / LOG_2_10))
-//        val scaledValue = Math.abs(this) * Math.pow(base, numDigits)
-//        return BinaryUInt(Math.round(scaledValue)).toDigits()
-//    }
-
-    // Last digit rounding is wrong when rounding up a 9
     override fun toString(): String {
         if (isZero() === True) {
             return if (precision.isZero() === True)
@@ -200,11 +222,17 @@ class Float private constructor(private val value: Int, private val precision: U
             else
                 "0." + List.repeating("0", UInt(precision)).reduce("", String::plus)
         }
+        if (precision.isZero() === True) {
+            return value.toString()
+        }
         val digits = value.digitIterator()
-        var x = precision
+        var x = Int(precision)
         var string = ""
         while(digits.hasNext() === True) {
-            string = if (x-- equals UInt.D1 === True) ".${digits.next()}$string" else "${digits.next()}$string"
+            string = if ((x--).isZero() === True) "${digits.next()}.$string" else "${digits.next()}$string"
+        }
+        if (!x.isNegative() === True) {
+            string = "0.${List.repeating("0", UInt(x)).reduce("", String::plus)}$string"
         }
         return string
     }

@@ -11,20 +11,20 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         val D8 = Int(UInt.D8)
         val D9 = Int(UInt.D9)
 
-        private fun valueOf(n: Number): Pair<UInt, Boolean> {
+        fun valueOf(n: Number): Int {
             return when (n) {
-                is UInt -> Pair(n, True)
-                is Int -> Pair(n.value, n.positive)
+                is UInt -> Int(n, True)
+                is Int -> Int(n.value, n.positive)
 //                is Float -> {
 //                    val intVal = n.toInt()
 //                    Pair(intVal.value, intVal.positive)
 //                }
-                else -> Pair(UInt.D0, True)
+                else -> D0
             }
         }
     }
 
-    constructor(args: Pair<UInt, Boolean>): this(args.first, args.second)
+    constructor(n: Int): this(n.value, n.positive)
     constructor(n: Number): this(valueOf(n))
 
     override operator fun invoke(n: Number) : Int {
@@ -102,6 +102,15 @@ class Int private constructor(private val value: UInt, private val positive: Boo
         return Pair(quotient, remainder)
     }
 
+    fun copySign(n: Number): Int {
+        return when (n) {
+            is UInt -> Int(value, True)
+            is Int -> Int(value, n.positive)
+            is Float -> Int(value, if (n.isNegative() === True) False else True)
+            else -> this
+        }
+    }
+
     override infix fun equals(n: Number?): Boolean {
         if (n === null) {
             return False
@@ -144,6 +153,8 @@ class Int private constructor(private val value: UInt, private val positive: Boo
     override fun isPositive() = value.isPositive() and positive
     override fun isZero() = value.isZero()
     override fun isNegative() = value.isPositive() and !positive
+
+    fun digitIterator() = value.digitIterator()
 
     override fun toString(): String {
         return if (isZero() === True)

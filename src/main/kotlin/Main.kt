@@ -1,5 +1,6 @@
 fun main() {
-    println(-(I9)(I6) * -(I1)(I0)(I0))
+    val x = (F4)(F0)
+    println(x.withPrecision((U1)(U0)) / (F7))
 //    println(63856525L * 53280941L)
 }
 

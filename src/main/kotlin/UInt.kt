@@ -1,4 +1,4 @@
-class UInt private constructor(private var digits: List<Digit>): Number() {
+class UInt constructor(private var digits: List<Digit>): Number() {
     companion object {
         val D0 = UInt(List())
         val D1 = UInt(List(Digit.D1))
@@ -26,7 +26,7 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
             D0.digits = List()
             D1.digits = List(Digit.D1)
         }
-        private fun valueOf(n: Number): UInt {
+        fun valueOf(n: Number): UInt {
             return when(n) {
                 is UInt -> n
                 is Int -> n.toUInt()
@@ -335,6 +335,8 @@ class UInt private constructor(private var digits: List<Digit>): Number() {
         }
         return binary
     }
+
+    fun digitIterator() = digits.iterator()
 
     override fun toString(): String {
         return if (isZero() === True)

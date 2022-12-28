@@ -23,16 +23,16 @@ val I7 = Int.D7
 val I8 = Int.D8
 val I9 = Int.D9
 
-//val F0 = Float.ZERO
-//val F1 = Float.ONE
-//val F2 = Float.TWO
-//val F3 = Float.THREE
-//val F4 = Float.FOUR
-//val F5 = Float.FIVE
-//val F6 = Float.SIX
-//val F7 = Float.SEVEN
-//val F8 = Float.EIGHT
-//val F9 = Float.NINE
+val F0 = Float.D0
+val F1 = Float.D1
+val F2 = Float.D2
+val F3 = Float.D3
+val F4 = Float.D4
+val F5 = Float.D5
+val F6 = Float.D6
+val F7 = Float.D7
+val F8 = Float.D8
+val F9 = Float.D9
 
 enum class ComparisonResult {
     LESS, EQUAL, GREATER

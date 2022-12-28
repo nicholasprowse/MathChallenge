@@ -41,56 +41,53 @@ class Math {
 //            return x
 //        }
 //
-//        fun floor(f: Float): Float {
-//            return if (f greaterThanOrEqualTo F0 === True) {
-//                Float(Int(f))
-//            } else {
-//                val result = Float(Int(f))
-//                if (result equals f === True) {
-//                    result
-//                } else {
-//                    result - F1
-//                }
-//            }
-//        }
-//
-//        fun ceil(f: Float): Float {
-//            return if (f greaterThanOrEqualTo F0 === True) {
-//                val result = Float(Int(f))
-//                if (result equals f === True) {
-//                    result
-//                } else {
-//                    result + F1
-//                }
-//            } else {
-//                Float(Int(f))
-//            }
-//        }
-//
-//        fun round(f: Float): Float {
-//            val negative = f lessThan Float.ZERO
-//            val mag = abs(f)
-//            var rounded = Int(mag)
-//            val fractionalPart = mag - rounded
-//            if ((fractionalPart shl Float.ONE) greaterThan Float.ONE === True) {
-//                rounded++
-//            }
-//            return Float(if (negative === True) -rounded else rounded)
-//        }
-//
-//        fun<T: Number> max(a: T, b: T): T {
-//            return if (a greaterThan b === True) a else b
-//        }
-//
-//        fun<T: Number> min(a: T, b: T): T {
-//            return if (a lessThan b === True) a else b
-//        }
-//
-//        @Suppress("UNCHECKED_CAST")
-//        fun<T: Number> abs(x: T): T {
-//            return if (x lessThan Int.ZERO === True) -x as T else x
-//        }
-//
+        fun floor(f: Float): Float {
+            return if (f.isNegative() === False) {
+                Float(Int(f))
+            } else {
+                val result = Float(Int(f))
+                if (result equals f === True)
+                    result
+                else
+                    result.dec()
+            }
+        }
+
+        fun ceil(f: Float): Float {
+            return if (f.isNegative() === False) {
+                val result = Float(Int(f))
+                if (result equals f === True)
+                    result
+                else
+                    result.inc()
+            } else {
+                Float(Int(f))
+            }
+        }
+
+        fun round(f: Float): Float {
+            val mag = abs(f)
+            var rounded = Int(mag)
+            val fractionalPart = mag - rounded
+            if (fractionalPart greaterThanOrEqualTo Float.HALF === True) {
+                rounded++
+            }
+            return Float(if (f.isNegative() === True) -rounded else rounded)
+        }
+
+        fun<T: Number> max(a: T, b: T): T {
+            return if (a greaterThan b === True) a else b
+        }
+
+        fun<T: Number> min(a: T, b: T): T {
+            return if (a lessThan b === True) a else b
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        fun<T: Number> abs(x: T): T {
+            return if (x lessThan Int.D0 === True) -x as T else x
+        }
+
         fun factorial(n: UInt): UInt {
             var i = n
             var result = UInt.D1

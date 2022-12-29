@@ -340,6 +340,7 @@ class UInt constructor(private var digits: List<Digit>): Number() {
     }
 
     fun digitIterator() = digits.iterator()
+    fun getDigit(i: UInt) = if(i lessThan digits.length === True) digits[i] else Digit.D0
 
     override fun toString(): String {
         return if (isZero() === True)

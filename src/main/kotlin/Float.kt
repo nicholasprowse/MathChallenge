@@ -38,6 +38,10 @@ class Float private constructor(private val value: Int, precision: UInt): Number
         return this * TEN + n
     }
 
+    fun copySign(n: Number): Float {
+        return Float(value.copySign(n), precision)
+    }
+
     override operator fun unaryMinus(): Float {
         return Float(-value, precision)
     }
@@ -69,8 +73,8 @@ class Float private constructor(private val value: Int, precision: UInt): Number
     override operator fun times(n: Number): Float {
         //return multiplyExact(n)
         val other = Float(n)
-        val newExponent = Math.max(precision, other.precision)
-        return multiplyExact(other).withPrecision(newExponent)
+        val newPrecision = Math.max(precision, other.precision)
+        return multiplyExact(other).withPrecision(newPrecision)
     }
 
     infix fun multiplyExact(n: Number): Float {
@@ -132,27 +136,6 @@ class Float private constructor(private val value: Int, precision: UInt): Number
         return withPrecision(UInt.D0).value
     }
 
-//    // Returns the value required to make an equivalent Float with the given exponent
-//    private fun floorToExponent(exponent: Int): Float {
-//        return Float(value shl (this.exponent - exponent), exponent)
-//    }
-//
-//    private fun roundToExponent(exponent: Int): Float {
-//        return Math.round(Float(value, this.exponent - exponent)) shl exponent
-//    }
-//
-//    fun addPrecisionInBits(extraPrecision: Int): Float {
-//        val exponent = exponent - extraPrecision
-//        return Math.round(Float(value, this.exponent - exponent)) shl exponent
-//    }
-//
-//    // Returns an equivalent float with the given number of bits after the decimal point
-//    // An extra bit of precision is required so we don't have errors in the last digit due to the use of floor division
-//    fun withPrecision(precision: UInt): Float {
-//        val bitPrecision = UInt(Math.ceil(LOG_2_10 * precision)) + U1
-//        return roundToExponent(-Int(bitPrecision))
-//    }
-
     // Returns an equivalent float with the given precision.
     // If the given precision is less than the current precision, then digits are truncated
     fun withPrecision(precision: UInt): Float {
@@ -200,20 +183,33 @@ class Float private constructor(private val value: Int, precision: UInt): Number
             withPrecision(precision - numZeros)
     }
 
-//    // rounds the float to the given number of digits
-//    fun round(digits: UInt = UInt.D0): Float {
-//
-//    }
-//
-//    // floors the float to the given number of digits
-//    fun floor(digits: UInt = UInt.D0): Float {
-//
-//    }
-//
-//    // ceilings the float to the given number of digits
-//    fun ceil(digits: UInt = UInt.D0): Float {
-//
-//    }
+    // rounds the float to the given number of digits
+    fun round(digits: UInt = UInt.D0): Float {
+        val n = Math.abs(withPrecision(digits))
+        val roundingDigit = value.getDigit((precision - digits).dec())
+        return if(roundingDigit greaterThanOrEqualTo Digit.D5 === True)
+            Float(n.value.inc(), n.precision).copySign(this)
+        else
+            n.copySign(this)
+    }
+
+    // floors the float to the given number of digits
+    fun floor(digits: UInt = UInt.D0): Float {
+        val truncated = withPrecision(digits)
+        return if (isNegative() === True)
+            if (truncated equals this === True) truncated else truncated.dec()
+        else
+            truncated
+    }
+
+    // ceilings the float to the given number of digits
+    fun ceil(digits: UInt = UInt.D0): Float {
+        val truncated = withPrecision(digits)
+        return if (isNegative() === True)
+            truncated
+        else
+            if (truncated equals this === True) truncated else truncated.inc()
+    }
 
     override fun toString(): String {
         if (isZero() === True) {
@@ -234,6 +230,6 @@ class Float private constructor(private val value: Int, precision: UInt): Number
         if (!x.isNegative() === True) {
             string = "0.${List.repeating("0", UInt(x)).reduce("", String::plus)}$string"
         }
-        return string
+        return if (isNegative() === True) "-$string" else string
     }
 }

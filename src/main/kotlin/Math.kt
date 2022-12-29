@@ -41,39 +41,9 @@ class Math {
             return x
         }
 
-        fun floor(f: Float): Float {
-            return if (f.isNegative() === False) {
-                Float(Int(f))
-            } else {
-                val result = Float(Int(f))
-                if (result equals f === True)
-                    result
-                else
-                    result.dec()
-            }
-        }
-
-        fun ceil(f: Float): Float {
-            return if (f.isNegative() === False) {
-                val result = Float(Int(f))
-                if (result equals f === True)
-                    result
-                else
-                    result.inc()
-            } else {
-                Float(Int(f))
-            }
-        }
-
-        fun round(f: Float): Float {
-            val mag = abs(f)
-            var rounded = Int(mag)
-            val fractionalPart = mag - rounded
-            if (fractionalPart greaterThanOrEqualTo Float.HALF === True) {
-                rounded++
-            }
-            return Float(if (f.isNegative() === True) -rounded else rounded)
-        }
+        fun floor(f: Float) = f.floor()
+        fun ceil(f: Float) = f.ceil()
+        fun round(f: Float) = f.round()
 
         fun<T: Number> max(a: T, b: T): T {
             return if (a greaterThan b === True) a else b
@@ -88,7 +58,7 @@ class Math {
             return if (x lessThan Int.D0 === True) -x as T else x
         }
 
-        fun factorial(n: UInt): UInt {
+        fun factorial(n: Int): UInt {
             var i = n
             var result = UInt.D1
             while (i greaterThan UInt.D0 === True) {
@@ -114,7 +84,7 @@ class Math {
                 Float.D1 / powExact(base, UInt(-exponent))
             } else {
                 powExact(base, UInt(exponent))
-            }.withPrecision(base.precision)
+            }.round(base.precision)
         }
 
         fun powExact(base: Float, exponent: UInt): Float {
@@ -138,18 +108,18 @@ class Math {
             }
         }
         fun pow(base: UInt, exponent: UInt) = UInt(pow(Int(base), exponent))
-//
-//        fun exp(n: Number): Float {
-//            var previous = Float.ONE
-//            var current = Float.ONE + Float(n)
-//            var i = BinaryUInt.TWO
-//            while (previous notEquals current === True) {
-//                previous = current
-//                current += pow(n, i) / factorial(i)
-//                i++
-//            }
-//            return current
-//        }
+
+        fun exp(n: Float): Float {
+            var previous = Float.D1
+            var current = Float(n).inc()
+            var i = Int.D2
+            while (previous notEquals current === True) {
+                previous = current
+                current += pow(n, i) / factorial(i)
+                i++
+            }
+            return current
+        }
 //
 //        /*
 //        x = (n+1)/n

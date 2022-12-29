@@ -155,6 +155,7 @@ class Int private constructor(private val value: UInt, private val positive: Boo
     override fun isNegative() = value.isPositive() and !positive
 
     fun digitIterator() = value.digitIterator()
+    fun getDigit(i: UInt) = value.getDigit(i)
 
     override fun toString(): String {
         return if (isZero() === True)
